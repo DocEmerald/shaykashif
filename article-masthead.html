@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>What the Masthead Tells Us — Shayaan Kashif</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:    #090909;
+      --g900:     #111111;
+      --g800:     #1a1a1a;
+      --g700:     #222222;
+      --g600:     #333333;
+      --g400:     #666666;
+      --g200:     #999999;
+      --g100:     #cccccc;
+      --white:    #f2f2f2;
+      --gold:     #e8d5a8;
+      --cyan:     #7ed4e6;
+      --serif:    'Playfair Display', Georgia, serif;
+      --sans:     'Inter', system-ui, sans-serif;
+      --ease:     cubic-bezier(0.76, 0, 0.24, 1);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+    ::selection { background: var(--gold); color: var(--black); }
+
+    /* grain */
+    #grain {
+      position: fixed; inset: -50%; width: 200%; height: 200%;
+      pointer-events: none; z-index: 9000; opacity: .028;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      animation: grain .5s steps(1) infinite;
+    }
+    @keyframes grain {
+      0%,100%{transform:translate(0,0)} 10%{transform:translate(-2%,-3%)} 20%{transform:translate(3%,2%)} 30%{transform:translate(-1%,4%)} 40%{transform:translate(4%,-1%)} 50%{transform:translate(-3%,3%)} 60%{transform:translate(2%,-4%)} 70%{transform:translate(-4%,1%)} 80%{transform:translate(1%,-2%)} 90%{transform:translate(-2%,4%)}
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 24px 48px;
+      background: linear-gradient(to bottom, rgba(9,9,9,.95) 0%, transparent 100%);
+      backdrop-filter: blur(0px);
+    }
+    .nav-back {
+      display: flex; align-items: center; gap: 10px;
+      color: var(--g200); text-decoration: none; font-size: 12px;
+      letter-spacing: .1em; text-transform: uppercase;
+      transition: color .3s;
+    }
+    .nav-back:hover { color: var(--white); }
+    .nav-back-arrow { font-size: 16px; transition: transform .3s var(--ease); }
+    .nav-back:hover .nav-back-arrow { transform: translateX(-4px); }
+    .nav-brand {
+      font-family: var(--serif); font-size: 16px;
+      color: var(--white); text-decoration: none; font-weight: 400;
+    }
+    .nav-pub {
+      font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--g400);
+    }
+
+    /* ── Hero ── */
+    #hero {
+      padding: 160px 48px 80px;
+      max-width: 900px; margin: 0 auto;
+      position: relative;
+    }
+    .hero-kicker {
+      font-size: 11px; letter-spacing: .2em; text-transform: uppercase;
+      color: var(--cyan); margin-bottom: 28px;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .hero-kicker::before {
+      content: ''; width: 32px; height: 1px; background: var(--cyan);
+    }
+    .hero-title {
+      font-family: var(--serif);
+      font-size: clamp(32px, 5vw, 62px);
+      font-weight: 700; line-height: 1.08;
+      letter-spacing: -.02em; margin-bottom: 32px;
+    }
+    .hero-title em { font-style: italic; font-weight: 400; color: var(--gold); }
+    .hero-meta {
+      display: flex; flex-wrap: wrap; gap: 24px; align-items: center;
+      margin-bottom: 40px;
+    }
+    .hero-byline { font-size: 13px; color: var(--g200); }
+    .hero-byline strong { color: var(--white); font-weight: 500; }
+    .meta-dot { color: var(--g600); }
+    .hero-pub {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--gold); padding: 4px 10px;
+      border: 1px solid rgba(232,213,168,.25); border-radius: 4px;
+    }
+    .hero-divider {
+      width: 100%; height: 1px; background: var(--g800); margin-top: 40px;
+    }
+
+    /* ── Stat Strip ── */
+    .stat-strip {
+      background: var(--g900);
+      border-top: 1px solid var(--g800);
+      border-bottom: 1px solid var(--g800);
+      padding: 40px 48px;
+    }
+    .stat-strip-inner {
+      max-width: 900px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 2px; background: var(--g800);
+    }
+    .stat-block {
+      background: var(--g900); padding: 28px 24px;
+      text-align: center;
+    }
+    .stat-num {
+      font-family: var(--serif); font-size: 48px; font-weight: 700;
+      line-height: 1; letter-spacing: -.03em; color: var(--white);
+    }
+    .stat-num.gold { color: var(--gold); }
+    .stat-num.cyan { color: var(--cyan); }
+    .stat-label {
+      font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+      color: var(--g400); margin-top: 8px; line-height: 1.4;
+    }
+
+    /* ── Article Body ── */
+    .article-wrap {
+      max-width: 720px; margin: 0 auto;
+      padding: 80px 48px 120px;
+    }
+
+    .prose p {
+      font-family: var(--serif); font-size: 19px;
+      line-height: 1.8; color: var(--g100);
+      margin-bottom: 26px; font-weight: 400;
+    }
+    .prose p:first-of-type::first-letter {
+      font-size: 4.5em; line-height: 0.8; float: left;
+      margin: 0.06em 0.1em 0 0; color: var(--gold);
+      font-family: var(--serif); font-weight: 700;
+    }
+    .prose em { font-style: italic; }
+    .prose strong { color: var(--white); font-weight: 500; }
+    .prose a {
+      color: var(--cyan); text-decoration: none;
+      border-bottom: 1px solid rgba(126,212,230,.3);
+      transition: border-color .3s;
+    }
+    .prose a:hover { border-color: var(--cyan); }
+
+    /* Section headers within article */
+    .prose-section {
+      margin: 72px 0 32px;
+      padding-top: 48px;
+      border-top: 1px solid var(--g800);
+    }
+    .prose-section-label {
+      font-size: 10px; letter-spacing: .2em; text-transform: uppercase;
+      color: var(--cyan); margin-bottom: 16px;
+    }
+    .prose-section-heading {
+      font-family: var(--serif); font-size: clamp(24px,3.5vw,36px);
+      font-weight: 400; line-height: 1.15; letter-spacing: -.015em;
+      color: var(--white); margin-bottom: 0;
+    }
+    .prose-section-heading em { font-style: italic; color: var(--gold); }
+
+    /* Pull quote */
+    .pull-quote {
+      margin: 56px -32px;
+      padding: 36px 40px;
+      border-left: 2px solid var(--gold);
+      background: var(--g900);
+    }
+    .pull-quote p {
+      font-family: var(--serif) !important;
+      font-size: 24px !important;
+      line-height: 1.4 !important;
+      color: var(--white) !important;
+      margin-bottom: 0 !important;
+      font-style: italic;
+    }
+    .pull-quote p::first-letter { all: unset; }
+    .pull-quote-attr {
+      font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--g400); margin-top: 16px;
+    }
+
+    /* ── Chart Blocks ── */
+    .chart-block {
+      margin: 64px 0;
+      background: var(--g900);
+      border: 1px solid var(--g800);
+      border-radius: 2px;
+      padding: 32px;
+    }
+    .chart-title {
+      font-family: var(--serif); font-size: 18px;
+      font-weight: 400; color: var(--white);
+      margin-bottom: 6px; letter-spacing: -.01em;
+    }
+    .chart-source {
+      font-size: 11px; color: var(--g400);
+      letter-spacing: .06em; margin-bottom: 28px;
+    }
+    .chart-note {
+      font-size: 11px; color: var(--g400);
+      margin-top: 16px; font-style: italic; line-height: 1.5;
+    }
+    .chart-container { position: relative; }
+
+    /* Poll grid */
+    .poll-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 2px; margin: 64px 0;
+      background: var(--g800);
+    }
+    .poll-card {
+      background: var(--g900); padding: 28px;
+    }
+    .poll-question {
+      font-family: var(--serif); font-size: 15px;
+      font-weight: 400; color: var(--white);
+      margin-bottom: 4px; line-height: 1.3;
+    }
+    .poll-source {
+      font-size: 10px; color: var(--g400);
+      letter-spacing: .06em; margin-bottom: 20px;
+    }
+    .poll-bar-wrap { margin-bottom: 10px; }
+    .poll-bar-label {
+      display: flex; justify-content: space-between;
+      font-size: 12px; color: var(--g200);
+      margin-bottom: 6px;
+    }
+    .poll-bar-label .pct { color: var(--white); font-weight: 500; }
+    .poll-bar-track {
+      height: 6px; background: var(--g700); border-radius: 3px;
+      overflow: hidden;
+    }
+    .poll-bar-fill {
+      height: 100%; border-radius: 3px;
+      width: 0; transition: width 1.4s var(--ease);
+    }
+    .poll-bar-fill.yes { background: linear-gradient(90deg, var(--gold), rgba(232,213,168,.6)); }
+    .poll-bar-fill.no  { background: linear-gradient(90deg, var(--g600), var(--g700)); }
+
+    /* Footnotes */
+    .footnotes {
+      margin-top: 80px; padding-top: 32px;
+      border-top: 1px solid var(--g800);
+    }
+    .footnotes-title {
+      font-size: 10px; letter-spacing: .15em; text-transform: uppercase;
+      color: var(--g400); margin-bottom: 16px;
+    }
+    .footnote {
+      font-size: 13px; color: var(--g400);
+      line-height: 1.6; margin-bottom: 10px;
+    }
+    .footnote sup { color: var(--gold); margin-right: 4px; }
+
+    /* ── Footer ── */
+    footer {
+      padding: 40px 48px; border-top: 1px solid var(--g800);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .footer-copy { font-size: 12px; color: var(--g600); }
+    .footer-back {
+      font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--g400); text-decoration: none; transition: color .3s;
+    }
+    .footer-back:hover { color: var(--white); }
+
+    /* ── Reveal ── */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity .9s var(--ease), transform .9s var(--ease); }
+    .reveal.visible { opacity: 1; transform: none; }
+    .reveal-1 { transition-delay: .1s; }
+    .reveal-2 { transition-delay: .2s; }
+    .reveal-3 { transition-delay: .32s; }
+
+    /* ── Responsive ── */
+    @media (max-width: 700px) {
+      nav { padding: 20px 20px; }
+      #hero, .article-wrap { padding-left: 24px; padding-right: 24px; }
+      .stat-strip { padding: 24px 20px; }
+      .stat-strip-inner { grid-template-columns: 1fr 1fr; }
+      .poll-grid { grid-template-columns: 1fr; }
+      .pull-quote { margin: 40px 0; }
+      footer { padding: 28px 24px; flex-direction: column; gap: 16px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <div id="grain"></div>
+
+  <!-- Nav -->
+  <nav>
+    <a href="index.html" class="nav-back">
+      <span class="nav-back-arrow">←</span> Writing
+    </a>
+    <a href="index.html" class="nav-brand">Shay Kashif</a>
+    <span class="nav-pub">The Exonian</span>
+  </nav>
+
+  <!-- Hero -->
+  <header id="hero">
+    <p class="hero-kicker reveal">Research · Social Dynamics · Diversity</p>
+    <h1 class="hero-title reveal reveal-1">
+      What the Masthead<br />Tells <em>Us</em>
+    </h1>
+    <p class="hero-title reveal reveal-1" style="font-family:var(--serif);font-size:clamp(16px,2.2vw,24px);font-weight:400;letter-spacing:-.01em;color:var(--g200);margin-bottom:0;line-height:1.3;">
+      A Research-Based Approach to Examining Social Dynamics,<br />Diversity and Representation in Select Academic Extracurriculars at Exeter
+    </p>
+    <div class="hero-meta reveal reveal-2" style="margin-top:28px;">
+      <span class="hero-byline">By <strong>Shayaan Kashif</strong></span>
+      <span class="meta-dot">·</span>
+      <span class="hero-pub">The Exonian</span>
+      <span class="meta-dot">·</span>
+      <span class="hero-byline">2025–26</span>
+    </div>
+    <div class="hero-divider reveal reveal-3"></div>
+  </header>
+
+  <!-- Stats at a Glance -->
+  <div class="stat-strip reveal">
+    <div class="stat-strip-inner">
+      <div class="stat-block">
+        <div class="stat-num gold">91%</div>
+        <div class="stat-label">Say nepotism plays a major role in turnover</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-num gold">73%</div>
+        <div class="stat-label">Say clubs have a toxic turnover culture</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-num gold">79%</div>
+        <div class="stat-label">Say clubs are cliquey / hard to mesh into</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-num cyan">150+</div>
+        <div class="stat-label">Respondents surveyed via @exiepolls</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Article Body -->
+  <main class="article-wrap">
+    <article class="prose">
+
+      <!-- Section 1: Introduction -->
+      <p>
+        A little over a year ago, I wrote an article for <em>The Exonian</em> titled "Clubs at Exeter are Broken", exploring a culture of exclusion that I believed had taken root in PEA's major "academic" student-run clubs (<em>The Exonian</em>, Debate, Model UN, etc.) and created a fundamental institutional failure in the system. Expressing my conviction and frustration as a new upper eager to get involved in all Exeter had to offer, I had little to rely on then besides my own experiences within Exeter's club culture. Over a year later, I'm no longer just an "outsider" criticizing the system—I'm a part of it. That shift has allowed me to approach the problem with a fresh perspective and analyze the structural obstacles Exeter faces in its pursuit of a truly equitable club environment.
+      </p>
+      <p>
+        Hoping to gain more insights into how student perception of fairness within Exeter's club system has changed, I recently contacted the administrator of the @exiepolls Instagram account, asking them to conduct an informal poll of Exonians on academic clubs and the culture surrounding them for reference. According to the account administrator, the poll had over 150 respondents—compared to PEA's student body of 1100, this is more than a sufficient sample size for an exploratory survey of this type. The general margin of error for rigorous polling is ±5%—here it was 7.29%. When asked if nepotism played a "major role" in the club turnover process, 91% of respondents answered "Yes." When asked if "academic clubs" such as <em>The Exonian</em>, Debate, Model UN, and Mock Trial had a "toxic turnover culture", 73% of respondents answered yes. When asked if these clubs were "cliquey" or "hard to mesh into", 79% answered yes.
+      </p>
+
+    </article>
+
+    <!-- CHART: Poll Results Grid -->
+    <div class="poll-grid reveal" id="poll-grid">
+
+      <div class="poll-card">
+        <div class="poll-question">How many major clubs are you a part of?</div>
+        <div class="poll-source">@exiepolls, Instagram · n ≈ 150</div>
+        <div class="chart-container" style="height:160px;">
+          <canvas id="chartMembership"></canvas>
+        </div>
+      </div>
+
+      <div class="poll-card">
+        <div class="poll-question">Does nepotism play a major role in club turnover?</div>
+        <div class="poll-source">@exiepolls, Instagram · n ≈ 150</div>
+        <div style="margin-top:8px;">
+          <div class="poll-bar-wrap">
+            <div class="poll-bar-label"><span>Yes</span><span class="pct">91%</span></div>
+            <div class="poll-bar-track"><div class="poll-bar-fill yes" data-width="91"></div></div>
+          </div>
+          <div class="poll-bar-wrap" style="margin-top:14px;">
+            <div class="poll-bar-label"><span>No</span><span class="pct">9%</span></div>
+            <div class="poll-bar-track"><div class="poll-bar-fill no" data-width="9"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="poll-card">
+        <div class="poll-question">Do these clubs have a toxic turnover culture?</div>
+        <div class="poll-source">@exiepolls, Instagram · n ≈ 150</div>
+        <div style="margin-top:8px;">
+          <div class="poll-bar-wrap">
+            <div class="poll-bar-label"><span>Yes</span><span class="pct">73%</span></div>
+            <div class="poll-bar-track"><div class="poll-bar-fill yes" data-width="73"></div></div>
+          </div>
+          <div class="poll-bar-wrap" style="margin-top:14px;">
+            <div class="poll-bar-label"><span>No</span><span class="pct">27%</span></div>
+            <div class="poll-bar-track"><div class="poll-bar-fill no" data-width="27"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="poll-card">
+        <div class="poll-question">Are these clubs cliquey / hard to mesh into?</div>
+        <div class="poll-source">@exiepolls, Instagram · n ≈ 150</div>
+        <div style="margin-top:8px;">
+          <div class="poll-bar-wrap">
+            <div class="poll-bar-label"><span>Yes</span><span class="pct">79%</span></div>
+            <div class="poll-bar-track"><div class="poll-bar-fill yes" data-width="79"></div></div>
+          </div>
+          <div class="poll-bar-wrap" style="margin-top:14px;">
+            <div class="poll-bar-label"><span>No</span><span class="pct">21%</span></div>
+            <div class="poll-bar-track"><div class="poll-bar-fill no" data-width="21"></div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <article class="prose">
+
+      <p>
+        The results of this poll are clear. A resounding majority of respondents still believe that nepotism plays a major role in club turnovers, with vast majorities also believing the clubs generally possess a toxic turnover culture and are hard to mesh into.
+      </p>
+      <p>
+        These numbers have persisted despite significant, commendable efforts from the administrative side to acknowledge and address the roots of Exeter's club problem, as perceived in the poll—circular qualification criteria that gatekeep access to club experiences (tournaments, competitions, advanced teams), and selection for familiarity over merit in turnovers, keeping control of clubs deeply centralized and predetermined. PEA StuAct and faculty advisors in certain clubs have, through increased involvement in the turnover process, created an external check on purely student-led decision-making that encourages thoughtful deliberation on equity and accessibility in academic clubs. Credit should be given where credit is due—these are meaningful steps. And yet, over 90% of respondents still perceived nepotism as a major factor in club turnover decisions. That gap between institutional efforts and student perception is worth examining.
+      </p>
+      <p>
+        My own personal experience with clubs at Exeter also reflects these findings—I would have answered in the affirmative for all these questions. Having now been on both sides of the turnover process, I can attest to the social dynamics that are indeed at play. Not only have I been involved in the deliberations behind turnover for the clubs <em>I</em> help lead, but I'm also close friends with the co-heads of many other of these major "academic" clubs at Exeter. What I've found is that, often subconsciously, co-heads will favor their friends, or even candidates who they "like" more or they perceive as having higher social "value", skewing club leadership in a direction that tends to be counterproductive to purely meritocratic considerations.
+      </p>
+
+      <div class="pull-quote">
+        <p>"The very language around clubs and their turnover creates a toxic, overcompetitive atmosphere that, for many Exonians, incentivizes the creation of an ingenuine, masked, and filtered version of themselves."</p>
+      </div>
+
+      <p>
+        This pattern is not unique to Exeter, nor does it require malicious intent to explain. The tendency, especially among adolescents, to favor friends is less a conscious choice than a neurological inevitability. Research consistently shows that adolescents are uniquely susceptible to peer influence—more so than adults, and even children—due to a developmental mismatch between the brain's social reward system, which matures early, and its cognitive control systems, which mature gradually. In fact, neuroscientists at UCLA found that, in adolescents, social rejection activates the same brain regions as physical pain. Against that neurological backdrop, the prospect of passing over a close friend for a club position and the social consequences that might follow is not simply uncomfortable for a seventeen-year-old brain—it registers as genuinely costly in ways that are difficult to consciously override, even for selectors who believe they are acting on merit. These social pressures are only magnified in a boarding school environment like that of Exeter, where the judgment of other adolescents is seemingly impossible to escape.
+      </p>
+      <p>
+        On the flipside of the coin, social dynamics can also be used to explain why a sheer majority of Exonians believe that these clubs can be cliquey and have a toxic turnover culture. A line I commonly overhear at Exeter is "Don't tell [x], or he/she won't give me co-head of [y] club." The very language around clubs and their turnover creates a toxic, overcompetitive atmosphere that, for many Exonians, incentivizes the creation of an ingenuine, masked, and filtered version of themselves designed to appease other students in positions of power. The consequences of this are far-reaching and tend to dictate, or at the very least influence, every interaction a prospective club member may have with an existing co-head, even outside the club environment. The end result is a quasi-sycophantic power dynamic with perverse incentive that, in circles of upperclassmen, is often the subject of derision.
+      </p>
+      <p>
+        This "yes-man" effect reverberates beyond the echo chamber it tends to create. Research on adolescent authenticity consistently finds that inauthenticity—behaving as a "false self" to meet perceived social expectations or requirements—is associated with lower wellbeing, reduced self-esteem, and depressive symptoms. Self-Determination Theory (SDT), one of the most extensively validated frameworks in motivational psychology, identifies autonomy as a basic psychological need whose thwarting produces predictable harm. When students "perform" enthusiasm for clubs not out of genuine enthusiasm but out of a desire to be selected by current leaders, they are engaging in what SDT researchers call "introjected regulation"—behavior not driven by passion but by contingent self-worth. This form of motivation also, ironically, undermines the deep identification with an activity that is necessary to produce the genuine expertise, commitment, and passion embodied by a leader. Consequently, a system like the one perpetuated in Exeter's "academic" clubs may actually be producing the opposite of what it intends at a structural level.
+      </p>
+
+      <!-- Section 2: Data -->
+      <div class="prose-section">
+        <p class="prose-section-label">Part II — The Data</p>
+        <h2 class="prose-section-heading">Who Bears the Brunt of<br /><em>These Systemic Issues?</em></h2>
+      </div>
+
+      <p>
+        Having identified the social forces that drive the causes of inequity in Exeter's clubs and the general lack of student confidence in Exeter's clubs, the logical next step is to ask <em>who</em> bears the brunt of these systemic issues. This has been the main focus of my research for the past few months. In a longitudinal study of two selected clubs—the Daniel Webster Debate Society (DWDS), and <em>The Exonian</em>—I collected data on the gender and ethnic distributions of the leadership of these clubs over the past couple of years to see if there are any noticeable patterns within these groups. I myself, as a member of <em>The Exonian</em>'s 147th Editorial Board and a former debater, was one of these statistics.
+      </p>
+      <p>
+        My dataset for <em>The Exonian</em> contained every Editorial Board since 2011—I had access to the mastheads of the previous three boards, and pulled the rest of the boards off of a historical version of <em>The Exonian</em>'s Wikipedia page. I compiled the names from all of these boards into a single spreadsheet,<sup>1</sup> and sorted all individuals listed as having participated in <em>The Exonian</em>'s Editorial Board by their board number, position held, and the year of their board.
+      </p>
+      <p>
+        The most immediate observation was the substantial increase in the <em>size</em> of the Editorial Board in the last 15 years. In 2011, there were 10 individuals on <em>The Exonian</em>'s Editorial Board. That number has steadily gone up since then, increasing to 32 this year. The size of the Editorial Board has therefore roughly tripled since 2011. This can likely be partially explained by <em>The Exonian</em>'s policy of giving all upper board applicants a position, ensuring no one is turned away.
+      </p>
+
+    </article>
+
+    <!-- CHART: Board Size -->
+    <div class="chart-block reveal">
+      <div class="chart-title">Exonian Editorial Board Size, Historically</div>
+      <div class="chart-source">Compiled from mastheads and Wikipedia · 2011–2026</div>
+      <div class="chart-container" style="height:280px;">
+        <canvas id="chartBoardSize"></canvas>
+      </div>
+    </div>
+
+    <article class="prose">
+
+      <p>
+        As for demographics, I faced an issue when it came to identifying demographics for historical boards beyond the 146th. Logistically, it would be impossible to individually contact each and every member of these boards to confirm their identities, forcing me to resort to demographic inference, a method commonly used by researchers for large-scale population studies. For this study, demographic inference was conducted using Claude Sonnet, a large language model. Recent research has found that LLM-based name-ethnicity classification achieves up to 84.7% accuracy, outperforming the widely-used BISG (Bayesian Improved Surname Geocoding) method at 68.2% on balanced samples. Importantly for this study's context, BISG is known to systematically misclassify affluent minorities as White—a bias that would be especially problematic in an elite boarding school environment like that of Exeter. LLM-based inference does not exhibit this same income-correlated bias. That said, all name-based tools carry limitations: they cannot capture multiracial identity, struggle with names that cross cultural lines, and may encode training data biases.<sup>2</sup> For this reason, findings from inferred boards should be understood as aggregate directional estimates rather than precise counts. The most critical comparisons in this study, which are done against Exeter's actual student body composition from 2024-2025, therefore use verified data from the four most recent boards only.
+      </p>
+      <p>
+        An evaluation of gender, across all boards, reveals that the gender divide has remained relatively equal over the years. Statistically, <em>The Exonian</em> actually skews slightly female, however this is not significant enough to be anything more than just slight year-by-year variation.
+      </p>
+      <p>
+        Looking at ethnic demographics presents a different picture—one of significant overrepresentation of certain minority groups and underrepresentation of others. In each of the four last boards (with verified data), East Asian students have constituted a plurality or outright majority of the editorial board. This pattern has grown more pronounced over time, reaching 58% on the current 148th board. White students represent the second-largest group on every board, but notably, have also seen the most dramatic decline of any group, falling from 36% on the 146th board to just under 20% on the 148th. Using the inferred historical data, White students have fallen 40% from 2011, when they composed approximately 60% of the board. Despite comprising nearly half of Exeter's student body, White students have been consistently underrepresented in the last four years relative to their share of the school, and that gap has widened in each successive board. The percentage of South Asian students have remained relatively constant in the last three years at about 13%, but a more longitudinal analysis shows the complete absence of South Asian students for a number of years, and numerous outliers. Most critically, however, Black and Latino students are starkly underrepresented in <em>The Exonian</em>'s editorial board, collectively accounting for just over 5% of the last four boards combined while, based on Exeter's 2024-2025 enrollment data, making up about 20% of the student body.
+      </p>
+
+    </article>
+
+    <!-- CHART: Demographics Line -->
+    <div class="chart-block reveal">
+      <div class="chart-title">The Exonian Editorial Board — Ethnic Demographics Over Time</div>
+      <div class="chart-source">Data before 2023 is inferred via LLM name-ethnicity classification · Hover for details</div>
+      <div class="chart-container" style="height:340px;">
+        <canvas id="chartDemographics"></canvas>
+      </div>
+      <div class="chart-note">↑ Solid lines indicate verified data (2023–2026). Dashed segments are directional estimates based on name inference.</div>
+    </div>
+
+    <!-- CHART: Representation Comparison -->
+    <div class="chart-block reveal">
+      <div class="chart-title">Board vs. School — Representation Gap (148th Board)</div>
+      <div class="chart-source">Comparing 148th Exonian Editorial Board to Exeter student body composition 2024–25 · Hover to compare</div>
+      <div class="chart-container" style="height:300px;">
+        <canvas id="chartRepGap"></canvas>
+      </div>
+      <div class="chart-note">* School data combines all Asian subgroups. "Asian (Board)" reflects combined East Asian + South Asian representation on the 148th board.</div>
+    </div>
+
+    <article class="prose">
+
+      <p>
+        The pattern of this data tells two stories—one of a widening gap between the two dominant demographics—White and East Asian students—and another of systemic, long-term underrepresentation of other demographics in <em>The Exonian</em>, most notably Black and Latino students. In the most recent board, when compared to school-wide numbers, Asian students (South and East), as a whole, are overrepresented by almost 2 times, White students are underrepresented by 0.4 times, Black students are underrepresented by 0.6 times, and Latino students are completely absent.
+      </p>
+      <p>
+        Similar findings can be seen in a long-term analysis of DWDS leadership, although on a smaller scale. Data collection and analysis was primarily done through looking through past co-heads on the club's social media, due to a lack of concrete historical data for the club's leadership and demographics. Nevertheless, the data here also mirrored the wider trend seen in <em>The Exonian</em>.
+      </p>
+
+      <!-- Section 3: Explanations -->
+      <div class="prose-section">
+        <p class="prose-section-label">Part III — Mechanisms</p>
+        <h2 class="prose-section-heading">Why Does This Happen?<br /><em>Two Separate Problems</em></h2>
+      </div>
+
+      <p>
+        So, why does this happen? And can these trends of overrepresentation and underrepresentation be explained? Well, while the overrepresentation of East Asian students and the chronic underrepresentation of Black and Latino students are correlated, they are not strictly inverses of each other (one does not cause the other). Rather, both are produced by different mechanisms that operate at different stages of the same process.
+      </p>
+      <p>
+        Once any group reaches a certain critical mass in an entirely student-controlled selection process, the selection process tends to reproduce that group. This is not necessarily through intent—in fact it often has nothing to do with intent—but is a structural issue. Overrepresentation can therefore be classified as a self-reinforcing cycle that produces a cascade effect of more overrepresentation. The minimal group paradigm employed in social psychology reveals that even arbitrary distinctions of an "ingroup" and "outgroup" can play a significant role in decisionmaking—in a process where those in charge of selection may know some candidates personally, this creates a preexisting bias that can subconsciously, yet unfairly, tip the metaphorical scale of turnover decisions. Affinity bias leads to perception of "ingroup" members as more competent and committed.
+      </p>
+      <p>
+        How does this tie to ethnicity? Jackson Lu, a professor at MIT Sloan School, tackles this question in his research on the "bamboo ceiling" faced by East Asians in the United States. Specifically, Lu analyzed the prevalence of ethnic homophily, "the preference for interacting with individuals of the same ethnicity", across 124 U.S. law schools and 54,620 JD students. Lu, in his analysis, found that high ethnic homophily among East Asian students was ultimately detrimental to leadership emergence among East Asians in White dominated environments. In an East Asian dominated environment, it appears that the reverse effect may occur—homophily drives selection <em>towards</em> East Asian candidates. Lu also relates his findings to the ingroups and outgroups of the minimal group paradigm. Language, cultural values, and shared heritage are all factors that are significant in creation of perceived ingroups and outgroups, even subconsciously. Consequently, affinity bias, the minimal group paradigm, and ethnic homophily go hand in hand in creating a self-reinforcing cycle of inequality and overrepresentation of certain groups, regardless of <em>which</em> group is being discussed.
+      </p>
+      <p>
+        In regards to the underrepresentation of Black and Latino students, a different mechanism seems to be at play. This is a "pipeline" problem, occurring at the point of entry, far before the turnover process even begins. Research from Nieman Reports finds that participation in student journalism among minority students is deeply intertwined with social indicators of support and belonging. This is especially important considering the nationwide underrepresentation of African-American voices in high school journalism. The increased value adolescents place on inclusiveness in social settings, as discussed previously, can manifest neurologically in reading environments for inclusion signals, or lack thereof. A masthead in which minority students are underrepresented, for example, could be interpreted as an implicit turnoff for prospective students, leading to disproportionately low participation in organizations such as <em>The Exonian</em>. A homogeneous masthead therefore doesn't just signal lack of diversity, but also perpetuates it by indicating to prospective members "who" the publication may be for.
+      </p>
+
+      <div class="pull-quote">
+        <p>"An overrepresentation problem that compounds upward, and an underrepresentation problem that compounds downward—both issues further exacerbating themselves, widening the gap."</p>
+      </div>
+
+      <p>
+        What then results, essentially, is an overrepresentation problem that compounds upward, and an underrepresentation problem that compounds downward. Both issues further exacerbate themselves, widening the gap. These mechanisms are a result of an almost entirely student-controlled selection process with a lack of significant external accountability for demographic outcomes. A student-controlled turnover model is designed to select for passion, merit, and commitment, but, as reflected by psychological literature and demographic data, it does the opposite, selecting for social proximity to current leadership and perpetuating a self-reinforcing cycle of inequality that ultimately leads to significant demographic overrepresentations and underrepresentations.
+      </p>
+
+      <!-- Section 4: Conclusion -->
+      <div class="prose-section">
+        <p class="prose-section-label">Part IV — Conclusion</p>
+        <h2 class="prose-section-heading">Why It Matters,<br />and <em>How We Fix It</em></h2>
+      </div>
+
+      <p>
+        It is especially imperative to address this in clubs such as <em>The Exonian</em> and DWDS, which are bastions of student expression and voice, because the problem is not only one of inequity, but also quality. This representation gap cannot be dismissed simply as a social justice issue—it is key to journalistic quality and integrity. Professor Scott Page at the University of Michigan shows in his book <em>The Diversity Bonus</em> that cognitively, socially, and ethnically diverse groups routinely outperform homogeneous expert groups on complex-problem solving tasks. What's more, especially in fields such as journalism and debate, participants have an immense responsibility to accurately represent beliefs, events, and ideas in a nuanced manner. A diverse newsroom or debate team that incorporates a plethora of identities, experiences and perspectives is key to this. A lack of diversity in these organizations at Exeter therefore actively harms their express purpose and mission and leads to lack of relevance and impact.
+      </p>
+      <p>
+        So, how do we fix this? The good news, and a highly important point of recognition, is that none of these problems are the "fault" of any person or group of people in particular. No individual intent is required—nor does the research support its presence—in this deeply structural form of inequity. The fault lies in a system that, though designed in good faith, is failing students on both ends and is long overdue for a reevaluation. Luckily, solving one end of the problem will also solve the other—by focusing on platforming underrepresented voices in these clubs, we can combat both underrepresentation by creating an influx of these voices, and also offset overrepresentation. This can be done in a myriad of ways, many of which these organizations already try to do. Most notably, clubs such as <em>The Exonian</em> and DWDS could work with affinity groups on campus to thoughtfully allocate page space and debate topics respectively and encourage open participation. Combined with intentional efforts to generally create a more diverse club body, this could significantly mitigate, or even eliminate, problems of overrepresentation and underrepresentation in just a few years.
+      </p>
+      <p>
+        On a more social level, our clubs could also try to propagate a democratic culture that does not make co-head positions the "end-all-be-all". We should move away from having co-head positions be the primary object of value in clubs—something impressive to put on your college resume—and rather embrace an attitude that celebrates tangible accomplishments and hard work instead of rank, giving everyone the opportunity to be passionate about what they love, even if they didn't get co-head. The point here being that no one should drop out of a club simply because they didn't get the leadership position they felt they deserved.
+      </p>
+      <p>
+        Unfortunately, we've reached a point where clubs have drifted from their intended purpose as hotbeds of student passion, innovation, and love for learning, turning into hypercompetitive pressure cookers that, as the numbers show, the sheer majority of Exonians have lost faith in. The future is optimistic, though—efforts are already being made to acknowledge and address the problem, and if we keep it up, we can bring clubs back in line with their intended purpose. Together, we can make these clubs the bastions of goodness and knowledge we all want them to be. So, in the spirit of <em>non sibi</em>, and as a testament to our passion for our favorite extracurricular—whether it be writing, debating or even roleplaying as Fiji in the General Assembly—let's keep working to make our clubs fun for everyone again.
+      </p>
+
+      <div class="footnotes">
+        <div class="footnotes-title">Footnotes</div>
+        <p class="footnote"><sup>1</sup> I used Claude AI's Sonnet 4.6 model to aid in aggregate data compilation.</p>
+        <p class="footnote"><sup>2</sup> Understanding the inference bias of different demographic data-collecting metrics was an ancillary purpose of this study. I compared Sonnet 4.6 to tools such as ethnicolr, BISG, and wru. Further research could build on verifying and comparing exact numbers with estimates taken by different models.</p>
+      </div>
+
+    </article>
+  </main>
+
+  <footer>
+    <span class="footer-copy">© 2026 Shayaan Kashif · Published in <em>The Exonian</em></span>
+    <a href="index.html" class="footer-back">← Back to shaykashif.com</a>
+  </footer>
+
+  <script>
+  // ── Global Chart Defaults ──────────────────────────────────────────────────
+  Chart.defaults.color = '#666666';
+  Chart.defaults.borderColor = '#1a1a1a';
+  Chart.defaults.font.family = "'Inter', system-ui, sans-serif";
+  Chart.defaults.font.size = 11;
+
+  const GOLD   = '#e8d5a8';
+  const CYAN   = '#7ed4e6';
+  const WHITE  = '#f2f2f2';
+  const G200   = '#999999';
+  const G400   = '#666666';
+  const G700   = '#222222';
+  const G800   = '#1a1a1a';
+
+  const tooltipPlugin = {
+    backgroundColor: '#111111',
+    borderColor: '#333333',
+    borderWidth: 1,
+    titleColor: WHITE,
+    bodyColor: G200,
+    padding: 12,
+    cornerRadius: 4,
+    titleFont: { family: "'Playfair Display', serif", size: 13 },
+    bodyFont:  { family: "'Inter', sans-serif", size: 11 },
+  };
+
+  // ── Chart 1: Club Membership Vertical Bar ─────────────────────────────────
+  new Chart(document.getElementById('chartMembership'), {
+    type: 'bar',
+    data: {
+      labels: ['0 clubs', '1 club', '2 clubs', '3+ clubs'],
+      datasets: [{
+        data: [32, 27, 25, 16],
+        backgroundColor: [
+          'rgba(232,213,168,0.85)',
+          'rgba(232,213,168,0.6)',
+          'rgba(232,213,168,0.4)',
+          'rgba(232,213,168,0.25)',
+        ],
+        borderWidth: 0,
+        borderRadius: 2,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          ...tooltipPlugin,
+          callbacks: {
+            label: ctx => `  ${ctx.raw}% of respondents`,
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          border: { display: false },
+          ticks: { color: G400, font: { size: 10 } }
+        },
+        y: {
+          grid: { color: G800, drawBorder: false },
+          border: { display: false, dash: [3,3] },
+          ticks: { color: G400, callback: v => v + '%', font: { size: 10 } },
+          max: 40,
+        }
+      }
+    }
+  });
+
+  // ── Chart 2: Board Size Line ───────────────────────────────────────────────
+  const boardYears = ['2011','2012','2013','2014','2015','2016','2017','2018','2019','2020','2021','2022','2023','2024','2025','2026'];
+  const boardSize  = [10, 17, 13, 12, 17, 15, 15, 19, 29, 25, 24, 25, 26, 25, 22, 32];
+
+  new Chart(document.getElementById('chartBoardSize'), {
+    type: 'line',
+    data: {
+      labels: boardYears,
+      datasets: [{
+        label: 'Board Members',
+        data: boardSize,
+        borderColor: CYAN,
+        borderWidth: 2,
+        backgroundColor: 'rgba(126,212,230,0.06)',
+        fill: true,
+        pointRadius: 4,
+        pointBackgroundColor: '#090909',
+        pointBorderColor: CYAN,
+        pointBorderWidth: 1.5,
+        pointHoverRadius: 6,
+        pointHoverBackgroundColor: CYAN,
+        tension: 0.3,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          ...tooltipPlugin,
+          callbacks: {
+            title: ctx => ctx[0].label,
+            label: ctx => `  ${ctx.raw} board members`,
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          border: { display: false },
+          ticks: { color: G400, font: { size: 10 }, maxRotation: 0 }
+        },
+        y: {
+          grid: { color: G800 },
+          border: { display: false },
+          ticks: { color: G400, font: { size: 10 } },
+          min: 0, max: 40,
+        }
+      }
+    }
+  });
+
+  // ── Chart 3: Demographics Multi-line ──────────────────────────────────────
+  // Years roughly mapping to board years 2011-2026
+  const demoYears = ['2011','2012','2013','2014','2015','2016','2017','2018','2019','2020','2021','2022','2023','2024','2025','2026'];
+
+  // Approximate values (inferred before 2023, verified 2023–2026)
+  // East Asian
+  const eastAsian =   [20, 42, 31, 29, 27, 43, 33, 41, 44, 48, 47, 50, 46, 50, 48, 58];
+  // White / European
+  const white =       [60, 50, 50, 29, 62, 37, 58, 40, 27, 37, 44, 37, 36, 30, 25, 19];
+  // South Asian
+  const southAsian =  [10,  5,  7, 15,  0,  5,  7, 15,  8,  5,  5,  8, 13, 13, 13, 13];
+  // Black / African
+  const black =       [ 5,  0,  8, 12,  5,  5,  0,  0,  8,  4,  0,  0,  3,  4,  6,  3];
+  // Latino / Hispanic
+  const latino =      [ 3,  3,  0,  0,  4,  5,  2,  5,  0,  0,  3,  4,  2,  3,  3,  0];
+  // Middle Eastern
+  const midEast =     [ 2,  0,  4, 15,  2,  5,  0,  0, 13,  6,  1,  1,  0,  0,  5,  7];
+
+  // Verified cutoff index: index 12 = 2023 onwards is verified (145th board ~)
+  // We'll use a dashed segment for historical, solid for recent
+  // Trick: split each dataset into two segments at index 12
+
+  function splitAtVerified(data, cutIdx) {
+    const inferred = data.map((v, i) => i <= cutIdx ? v : null);
+    const verified = data.map((v, i) => i >= cutIdx ? v : null);
+    return { inferred, verified };
+  }
+
+  const cutIdx = 12; // 2023 = index 12
+
+  const demoDatasets = [
+    { label: 'East Asian', data: eastAsian,  color: CYAN,             dash: [5,3] },
+    { label: 'White / European', data: white, color: GOLD,            dash: [5,3] },
+    { label: 'South Asian', data: southAsian, color: '#d4a855',       dash: [5,3] },
+    { label: 'Black / African', data: black,  color: '#8fc48f',       dash: [5,3] },
+    { label: 'Latino / Hispanic', data: latino, color: '#e8a870',     dash: [5,3] },
+    { label: 'Middle Eastern', data: midEast, color: '#b0a0d0',       dash: [5,3] },
+  ];
+
+  const demoChartDatasets = [];
+  demoDatasets.forEach(ds => {
+    const { inferred, verified } = splitAtVerified(ds.data, cutIdx);
+    // Inferred (dashed)
+    demoChartDatasets.push({
+      label: ds.label + ' (est.)',
+      data: inferred,
+      borderColor: ds.color,
+      borderWidth: 1.5,
+      borderDash: ds.dash,
+      backgroundColor: 'transparent',
+      pointRadius: 0,
+      tension: 0.3,
+      spanGaps: false,
+    });
+    // Verified (solid)
+    demoChartDatasets.push({
+      label: ds.label,
+      data: verified,
+      borderColor: ds.color,
+      borderWidth: 2.5,
+      backgroundColor: 'transparent',
+      pointRadius: 4,
+      pointBackgroundColor: '#090909',
+      pointBorderColor: ds.color,
+      pointBorderWidth: 1.5,
+      pointHoverRadius: 6,
+      tension: 0.3,
+      spanGaps: false,
+    });
+  });
+
+  new Chart(document.getElementById('chartDemographics'), {
+    type: 'line',
+    data: { labels: demoYears, datasets: demoChartDatasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: {
+          display: true,
+          position: 'bottom',
+          labels: {
+            color: G200,
+            font: { size: 10 },
+            boxWidth: 16,
+            padding: 16,
+            filter: item => !item.text.includes('(est.)'),
+          }
+        },
+        tooltip: {
+          ...tooltipPlugin,
+          filter: item => !item.dataset.label.includes('(est.)'),
+          callbacks: {
+            title: ctx => 'Year: ' + ctx[0].label,
+            label: ctx => {
+              const v = ctx.raw;
+              if (v === null) return null;
+              return `  ${ctx.dataset.label}: ${v}%`;
+            },
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          border: { display: false },
+          ticks: { color: G400, font: { size: 10 }, maxRotation: 0 }
+        },
+        y: {
+          grid: { color: G800 },
+          border: { display: false },
+          ticks: { color: G400, callback: v => v + '%', font: { size: 10 } },
+          min: 0, max: 80,
+        }
+      }
+    }
+  });
+
+  // ── Chart 4: Representation Gap Grouped Bar ────────────────────────────────
+  const repGroups = ['Asian\n(All)', 'White', 'Black', 'Latino'];
+  const boardPct  = [71,   19,  3,   0  ]; // 148th board (EA 58% + SA 13%)
+  const schoolPct = [36.5, 48.8, 10.7, 9.5]; // Exeter 2024-25
+
+  new Chart(document.getElementById('chartRepGap'), {
+    type: 'bar',
+    data: {
+      labels: repGroups,
+      datasets: [
+        {
+          label: '148th Board',
+          data: boardPct,
+          backgroundColor: 'rgba(232,213,168,0.8)',
+          borderWidth: 0,
+          borderRadius: 2,
+        },
+        {
+          label: 'Exeter Student Body',
+          data: schoolPct,
+          backgroundColor: 'rgba(126,212,230,0.35)',
+          borderColor: 'rgba(126,212,230,0.5)',
+          borderWidth: 1,
+          borderRadius: 2,
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: true,
+          position: 'top',
+          align: 'end',
+          labels: { color: G200, font: { size: 10 }, boxWidth: 12, padding: 16 }
+        },
+        tooltip: {
+          ...tooltipPlugin,
+          callbacks: {
+            label: ctx => `  ${ctx.dataset.label}: ${ctx.raw}%`,
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          border: { display: false },
+          ticks: { color: G400, font: { size: 11 } }
+        },
+        y: {
+          grid: { color: G800 },
+          border: { display: false },
+          ticks: { color: G400, callback: v => v + '%', font: { size: 10 } },
+          max: 80,
+        }
+      }
+    }
+  });
+
+  // ── Scroll Reveal ─────────────────────────────────────────────────────────
+  const revealObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        revealObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+  setTimeout(() => {
+    document.querySelectorAll('#hero .reveal').forEach(el => el.classList.add('visible'));
+  }, 100);
+
+  // ── Poll Bar Animations ───────────────────────────────────────────────────
+  const barObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.poll-bar-fill').forEach(bar => {
+          bar.style.width = bar.dataset.width + '%';
+        });
+        barObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.2 });
+  document.querySelectorAll('#poll-grid').forEach(el => barObs.observe(el));
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shay Kashif — Photographer, Filmmaker & Data Scientist</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Reset & Base ─────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #090909;
+      --grey-900: #111111;
+      --grey-800: #1a1a1a;
+      --grey-700: #222222;
+      --grey-600: #333333;
+      --grey-400: #666666;
+      --grey-200: #999999;
+      --grey-100: #cccccc;
+      --white: #f2f2f2;
+      --gold: #e8d5a8;      /* warm — photo/film */
+      --cyan: #7ed4e6;      /* cool — data/code */
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-sans: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+      --ease: cubic-bezier(0.76, 0, 0.24, 1);
+    }
+
+    /* ── Light mode variable overrides ────────────────────── */
+    body.light {
+      --black:    #f5f2ed;
+      --grey-900: #ede9e2;
+      --grey-800: #dedad2;
+      --grey-700: #c8c3bb;
+      --grey-600: #a8a39a;
+      --grey-400: #726d65;
+      --grey-200: #484340;
+      --grey-100: #2e2a26;
+      --white:    #1a1714;
+      --gold:     #8a6410;
+      --cyan:     #1270a0;
+    }
+    /* Keep the hero always dark so photos stay readable */
+    body.light #hero {
+      --black:    #090909;
+      --grey-900: #111111;
+      --grey-800: #1a1a1a;
+      --grey-700: #222222;
+      --grey-600: #333333;
+      --grey-400: #666666;
+      --grey-200: #999999;
+      --grey-100: #cccccc;
+      --white:    #f2f2f2;
+      --gold:     #e8d5a8;
+      --cyan:     #7ed4e6;
+    }
+    /* Grain is subtler on light backgrounds */
+    body.light #grain { opacity: 0.018; }
+    /* Marquee border accents in light mode */
+    body.light .marquee-wrap {
+      border-color: var(--grey-800);
+    }
+    /* Blog card featured border stays gold-readable */
+    body.light .blog-card.featured {
+      border-left-color: var(--gold);
+    }
+    /* Data card accent line */
+    body.light .data-card-code {
+      background: var(--grey-900);
+      border-color: var(--grey-800);
+    }
+    /* Stack bar track */
+    body.light .stack-bar-wrap { background: var(--grey-800); }
+    /* Pill borders in hero stay original (hero is forced dark anyway) */
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: var(--font-sans);
+      font-size: 15px;
+      line-height: 1.6;
+      cursor: none;
+      overflow-x: hidden;
+    }
+    ::selection { background: var(--gold); color: var(--black); }
+
+    /* ── Grain ────────────────────────────────────────────── */
+    #grain {
+      position: fixed; inset: -50%;
+      width: 200%; height: 200%;
+      pointer-events: none; z-index: 9000;
+      opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      animation: grain 0.5s steps(1) infinite;
+    }
+    @keyframes grain {
+      0%,100%{transform:translate(0,0)} 10%{transform:translate(-2%,-3%)} 20%{transform:translate(3%,2%)} 30%{transform:translate(-1%,4%)} 40%{transform:translate(4%,-1%)} 50%{transform:translate(-3%,3%)} 60%{transform:translate(2%,-4%)} 70%{transform:translate(-4%,1%)} 80%{transform:translate(1%,-2%)} 90%{transform:translate(-2%,4%)}
+    }
+
+    /* ── Cursor ───────────────────────────────────────────── */
+    #cursor {
+      position: fixed; width: 10px; height: 10px;
+      background: var(--white); border-radius: 50%;
+      pointer-events: none; z-index: 9999;
+      transform: translate(-50%,-50%);
+      transition: width .3s var(--ease), height .3s var(--ease), background .3s;
+      mix-blend-mode: difference;
+    }
+    #cursor-ring {
+      position: fixed; width: 40px; height: 40px;
+      border: 1px solid rgba(242,242,242,.35); border-radius: 50%;
+      pointer-events: none; z-index: 9998;
+      transform: translate(-50%,-50%);
+      transition: width .4s var(--ease), height .4s var(--ease), border-color .3s;
+    }
+    body.cursor-hover #cursor { width: 18px; height: 18px; }
+    body.cursor-hover #cursor-ring { width: 64px; height: 64px; border-color: rgba(232,213,168,.5); }
+
+    /* ── Nav ──────────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 32px;
+      padding: 0 48px;
+      height: 64px;
+      background: rgba(9,9,9,0.62);
+      backdrop-filter: blur(20px) saturate(1.6);
+      -webkit-backdrop-filter: blur(20px) saturate(1.6);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      transition: background .4s, border-color .4s;
+    }
+    body.light nav {
+      background: rgba(245,242,237,0.82);
+      border-bottom: 1px solid rgba(0,0,0,0.09);
+    }
+    .nav-logo {
+      font-family: var(--font-serif); font-size: 18px; font-weight: 400;
+      color: var(--white); text-decoration: none; letter-spacing: .01em;
+      transition: color .3s;
+    }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a {
+      color: var(--grey-400); text-decoration: none;
+      font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+      transition: color .3s;
+    }
+    .nav-links a:hover { color: var(--white); }
+
+    /* ── Theme Toggle ──────────────────────────────────────── */
+    .nav-theme-btn {
+      display: flex; align-items: center; gap: 6px;
+      background: none; border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 100px;
+      padding: 5px 13px;
+      cursor: none;
+      color: var(--grey-400);
+      font-family: var(--font-sans); font-size: 10px;
+      letter-spacing: .12em; text-transform: uppercase;
+      transition: color .3s, border-color .3s, background .3s;
+      flex-shrink: 0;
+    }
+    .nav-theme-btn:hover { color: var(--white); border-color: rgba(255,255,255,0.35); }
+    body.light .nav-theme-btn {
+      border-color: rgba(0,0,0,0.16);
+    }
+    body.light .nav-theme-btn:hover { color: var(--white); border-color: rgba(0,0,0,0.4); }
+    .nav-theme-btn svg { width: 12px; height: 12px; flex-shrink: 0; }
+    /* show/hide correct icon per mode */
+    .icon-sun  { display: none; }
+    .icon-moon { display: block; }
+    body.light .icon-sun  { display: block; }
+    body.light .icon-moon { display: none; }
+
+    /* ── Hero ─────────────────────────────────────────────── */
+    #hero {
+      min-height: 100vh; display: flex; flex-direction: column;
+      justify-content: flex-end; padding: 0 48px 80px;
+      position: relative; overflow: hidden;
+    }
+    .hero-glow {
+      position: absolute; inset: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 60% 50% at 65% 38%, rgba(80,55,25,.18) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 30% at 30% 70%, rgba(20,70,100,.12) 0%, transparent 60%);
+    }
+    /* Lift hero text above the absolutely-positioned photo stage */
+    .hero-eyebrow, .hero-title, .hero-sub {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-eyebrow {
+      font-size: 11px; letter-spacing: .2em; text-transform: uppercase;
+      color: var(--gold); margin-top: 20px; margin-bottom: 0;
+    }
+    .hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(68px, 10vw, 156px);
+      font-weight: 400; line-height: .92; letter-spacing: -.025em;
+    }
+    .hero-title em { font-style: italic; color: var(--gold); }
+    .hero-sub {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      margin-top: 48px;
+    }
+    .hero-pills { display: flex; gap: 10px; flex-wrap: wrap; }
+    .hero-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 14px; border-radius: 100px;
+      font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+      border: 1px solid;
+    }
+    .hero-pill.gold { border-color: rgba(232,213,168,.35); color: var(--gold); }
+    .hero-pill.cyan { border-color: rgba(126,212,230,.3); color: var(--cyan); }
+    .hero-scroll {
+      display: flex; align-items: center; gap: 12px;
+      font-size: 11px; letter-spacing: .15em; text-transform: uppercase;
+      color: var(--grey-400);
+    }
+    .scroll-line { width: 40px; height: 1px; background: var(--grey-600); }
+
+    /* ── Hero Photo Stage ─────────────────────────────────── */
+    .hero-photo-stage {
+      position: absolute; inset: 0; z-index: 0; overflow: hidden;
+    }
+    .hero-photo-img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center 35%;
+      opacity: 0;
+      transition: opacity 2.2s ease-in-out;
+      /* Filmic grade: pull saturation, lift contrast, hint of sepia */
+      filter: contrast(1.12) saturate(0.48) brightness(0.82) sepia(0.1);
+      will-change: opacity;
+    }
+    /* Radial vignette — darkens edges, keeps centre alive */
+    .hero-photo-vignette {
+      position: absolute; inset: 0; z-index: 1; pointer-events: none;
+      background: radial-gradient(ellipse 110% 90% at 50% 30%, transparent 20%, rgba(0,0,0,0.72) 100%);
+    }
+    /* Bottom-weighted gradient so title text stays readable */
+    .hero-photo-grade {
+      position: absolute; inset: 0; z-index: 2; pointer-events: none;
+      background: linear-gradient(
+        to bottom,
+        rgba(9,9,9,0.28) 0%,
+        rgba(9,9,9,0.0)  18%,
+        rgba(9,9,9,0.0)  46%,
+        rgba(9,9,9,0.58) 66%,
+        rgba(9,9,9,0.88) 83%,
+        rgba(9,9,9,0.97) 100%
+      );
+    }
+    /* Fine scan-line texture — adds analog film feel */
+    .hero-photo-scanlines {
+      position: absolute; inset: 0; z-index: 3; pointer-events: none;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent            0px,
+        transparent            2px,
+        rgba(0,0,0,0.032)      2px,
+        rgba(0,0,0,0.032)      3px
+      );
+    }
+
+    /* ── Shared Section Styles ────────────────────────────── */
+    section { padding: 130px 48px; }
+    .section-label {
+      font-size: 11px; letter-spacing: .2em; text-transform: uppercase;
+      margin-bottom: 60px; display: flex; align-items: center; gap: 14px;
+    }
+    .section-label::after {
+      content: ''; flex: 1; max-width: 60px; height: 1px;
+      background: var(--grey-700);
+    }
+    .section-label.gold { color: var(--gold); }
+    .section-label.cyan { color: var(--cyan); }
+
+    /* ── About ────────────────────────────────────────────── */
+    #about {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 80px; align-items: center;
+      border-top: 1px solid var(--grey-800);
+    }
+    .about-heading {
+      font-family: var(--font-serif);
+      font-size: clamp(34px, 4.5vw, 60px);
+      font-weight: 400; line-height: 1.1; letter-spacing: -.02em;
+      margin-bottom: 28px;
+    }
+    .about-heading em { font-style: italic; color: var(--gold); }
+    .about-text { color: var(--grey-200); font-size: 15px; line-height: 1.8; max-width: 420px; }
+    .about-text p + p { margin-top: 18px; }
+    .about-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 32px; }
+    .about-tag {
+      padding: 5px 12px; border-radius: 4px;
+      font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+    }
+    .about-tag.gold { background: rgba(232,213,168,.08); color: var(--gold); border: 1px solid rgba(232,213,168,.2); }
+    .about-tag.cyan { background: rgba(126,212,230,.07); color: var(--cyan); border: 1px solid rgba(126,212,230,.18); }
+    .about-img-wrap { aspect-ratio: 3/4; max-height: 480px; overflow: hidden; position: relative; }
+    .about-img-placeholder {
+      width: 100%; height: 100%; background: var(--grey-800);
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    .about-img-placeholder::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, #1a1410 0%, #2d2015 50%, #1a0f0a 100%);
+      background-size: 200% 200%;
+      animation: shimmer 8s ease infinite;
+    }
+    @keyframes shimmer { 0%,100%{background-position:0 0} 50%{background-position:100% 100%} }
+    .about-img-placeholder svg { position: relative; z-index: 1; opacity: .25; }
+    .about-stats { display: flex; gap: 40px; margin-top: 44px; }
+    .stat-num { font-family: var(--font-serif); font-size: 38px; font-weight: 400; line-height: 1; }
+    .stat-label { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--grey-400); margin-top: 4px; }
+
+    /* ── FILM / PHOTO SECTION ─────────────────────────────── */
+    #film { border-top: 1px solid var(--grey-800); }
+
+    .film-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 3px;
+    }
+    .film-item { position: relative; overflow: hidden; cursor: none; }
+    .film-item:nth-child(1) { grid-column: span 7; }
+    .film-item:nth-child(2) { grid-column: span 5; }
+    .film-item:nth-child(3) { grid-column: span 4; }
+    .film-item:nth-child(4) { grid-column: span 8; }
+    .film-item:nth-child(5) { grid-column: span 5; }
+    .film-item:nth-child(6) { grid-column: span 7; }
+
+    .film-thumb {
+      width: 100%; aspect-ratio: 16/10; position: relative;
+    }
+    .film-item:nth-child(1) .film-thumb { aspect-ratio: 4/3; }
+    .film-item:nth-child(2) .film-thumb { aspect-ratio: 3/4; }
+    .film-item:nth-child(3) .film-thumb { aspect-ratio: 4/5; }
+    .film-item:nth-child(4) .film-thumb { aspect-ratio: 8/5; }
+    .film-item:nth-child(5) .film-thumb { aspect-ratio: 5/6; }
+    .film-item:nth-child(6) .film-thumb { aspect-ratio: 7/5; }
+
+    .film-bg {
+      position: absolute; inset: 0;
+      transition: transform .9s var(--ease);
+    }
+    .film-item:hover .film-bg { transform: scale(1.06); }
+    .film-item:nth-child(1) .film-bg { background: linear-gradient(160deg,#1a0f08 0%,#2d1a0a 50%,#0f0908 100%); }
+    .film-item:nth-child(2) .film-bg { background: linear-gradient(135deg,#090e1a 0%,#0d1520 100%); }
+    .film-item:nth-child(3) .film-bg { background: linear-gradient(160deg,#0f1a12 0%,#08120a 100%); }
+    .film-item:nth-child(4) .film-bg { background: linear-gradient(160deg,#1a1008 0%,#2a1800 50%,#100a04 100%); }
+    .film-item:nth-child(5) .film-bg { background: linear-gradient(135deg,#1a1520 0%,#0d0a1c 100%); }
+    .film-item:nth-child(6) .film-bg { background: linear-gradient(160deg,#0f100a 0%,#1a1500 50%,#0a0d08 100%); }
+
+    .film-bg::after {
+      content: ''; position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,.015) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,255,255,.015) 1px,transparent 1px);
+      background-size: 48px 48px;
+    }
+    .film-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,.75) 0%, transparent 55%);
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 20px; opacity: 0;
+      transition: opacity .4s var(--ease);
+    }
+    .film-item:hover .film-overlay { opacity: 1; }
+    .film-tag {
+      font-size: 10px; letter-spacing: .15em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 4px;
+    }
+    .film-name {
+      font-family: var(--font-serif); font-size: 20px;
+      font-weight: 400; color: var(--white); line-height: 1.2;
+    }
+    .film-list-row {
+      display: flex; justify-content: space-between; align-items: baseline;
+      padding: 18px 0; border-bottom: 1px solid var(--grey-800);
+    }
+    .film-list-title { font-family: var(--font-serif); font-size: 16px; font-weight: 400; }
+    .film-list-meta { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--grey-400); }
+
+    /* ── DATA / CODE SECTION ──────────────────────────────── */
+    #data { border-top: 1px solid var(--grey-800); background: var(--black); }
+
+    .data-intro {
+      max-width: 560px; margin-bottom: 64px;
+    }
+    .data-intro-heading {
+      font-family: var(--font-serif); font-size: clamp(28px,4vw,48px);
+      font-weight: 400; line-height: 1.1; letter-spacing: -.02em; margin-bottom: 16px;
+    }
+    .data-intro-heading em { font-style: italic; color: var(--cyan); }
+    .data-intro-text { color: var(--grey-200); font-size: 14px; line-height: 1.8; }
+
+    .data-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--grey-800);
+    }
+
+    .data-card {
+      background: var(--black);
+      padding: 36px 32px;
+      position: relative;
+      overflow: hidden;
+      transition: background .4s;
+      cursor: none;
+    }
+    .data-card:hover { background: var(--grey-900); }
+
+    .data-card-accent {
+      position: absolute; top: 0; left: 0;
+      width: 100%; height: 2px;
+      background: linear-gradient(90deg, var(--cyan), transparent);
+      opacity: 0;
+      transition: opacity .4s;
+    }
+    .data-card:hover .data-card-accent { opacity: 1; }
+
+    .data-card-tag {
+      font-family: var(--font-mono); font-size: 10px;
+      letter-spacing: .12em; text-transform: uppercase;
+      color: var(--cyan); margin-bottom: 16px;
+    }
+    .data-card-title {
+      font-family: var(--font-serif); font-size: 22px;
+      font-weight: 400; line-height: 1.2; margin-bottom: 14px;
+      letter-spacing: -.01em;
+    }
+    .data-card-desc {
+      font-size: 13px; color: var(--grey-200); line-height: 1.7; margin-bottom: 24px;
+    }
+    .data-card-code {
+      font-family: var(--font-mono); font-size: 11px;
+      background: var(--grey-800); border: 1px solid var(--grey-700);
+      padding: 14px 16px; border-radius: 6px;
+      color: var(--grey-200); overflow: hidden;
+      white-space: pre; margin-bottom: 24px;
+      line-height: 1.6;
+    }
+    .data-card-code .kw { color: var(--cyan); }
+    .data-card-code .fn { color: #a8d8a8; }
+    .data-card-code .st { color: #e8c87a; }
+    .data-card-code .cm { color: var(--grey-400); font-style: italic; }
+
+    .data-card-stack { display: flex; gap: 6px; flex-wrap: wrap; }
+    .stack-chip {
+      font-family: var(--font-mono); font-size: 10px;
+      padding: 3px 8px; border-radius: 3px;
+      background: rgba(126,212,230,.07);
+      border: 1px solid rgba(126,212,230,.15);
+      color: var(--cyan);
+    }
+    .data-card-footer {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 24px; padding-top: 20px;
+      border-top: 1px solid var(--grey-800);
+    }
+    .data-card-year { font-size: 11px; color: var(--grey-400); }
+    .data-card-arrow {
+      width: 28px; height: 28px; border-radius: 50%;
+      border: 1px solid var(--grey-700);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--grey-400); font-size: 14px;
+      transition: border-color .3s, color .3s, transform .3s var(--ease);
+    }
+    .data-card:hover .data-card-arrow {
+      border-color: var(--cyan); color: var(--cyan);
+      transform: translate(2px,-2px);
+    }
+
+    /* Wide featured data card */
+    .data-card.featured {
+      grid-column: span 2;
+    }
+    .data-card.featured .data-card-title { font-size: 28px; }
+
+    /* ── Skills / Stack Bar ───────────────────────────────── */
+    #stack {
+      border-top: 1px solid var(--grey-800);
+      padding: 80px 48px;
+    }
+    .stack-row {
+      display: flex; align-items: center; gap: 24px;
+      padding: 22px 0; border-bottom: 1px solid var(--grey-800);
+    }
+    .stack-row:first-of-type { border-top: 1px solid var(--grey-800); }
+    .stack-name {
+      font-family: var(--font-serif); font-size: 18px;
+      font-weight: 400; width: 180px; flex-shrink: 0;
+    }
+    .stack-bar-wrap { flex: 1; height: 2px; background: var(--grey-800); border-radius: 2px; }
+    .stack-bar {
+      height: 100%; border-radius: 2px;
+      background: linear-gradient(90deg, var(--cyan), rgba(126,212,230,.3));
+      width: 0;
+      transition: width 1.2s var(--ease);
+    }
+    .stack-bar.gold-bar {
+      background: linear-gradient(90deg, var(--gold), rgba(232,213,168,.3));
+    }
+    .stack-pct { font-family: var(--font-mono); font-size: 11px; color: var(--grey-400); width: 36px; text-align: right; }
+
+    /* ── Blog ─────────────────────────────────────────────── */
+    #blog { border-top: 1px solid var(--grey-800); }
+    .blog-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--grey-800); margin-top: 4px; }
+    .blog-card {
+      background: var(--black); padding: 36px 32px;
+      text-decoration: none; color: inherit;
+      display: flex; flex-direction: column; gap: 12px;
+      transition: background .3s;
+    }
+    .blog-card:hover { background: var(--grey-900); }
+    .blog-card.featured {
+      grid-column: span 2;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      grid-template-rows: auto auto auto;
+      column-gap: 40px;
+      align-items: start;
+      border-left: 2px solid var(--gold);
+      padding: 40px 36px;
+      position: relative;
+    }
+    .blog-card.featured:hover { background: var(--grey-900); }
+    .blog-card.featured .blog-card-tag { grid-column: 1; }
+    .blog-card.featured .blog-card-title {
+      font-size: 26px; grid-column: 1;
+    }
+    .blog-card.featured .blog-card-excerpt { grid-column: 1; max-width: 520px; }
+    .blog-card.featured .blog-card-date { grid-column: 1; }
+    .blog-card.featured .featured-badge {
+      grid-column: 2; grid-row: 1 / 5;
+      align-self: center;
+      font-size: 10px; letter-spacing: .15em; text-transform: uppercase;
+      color: var(--gold); border: 1px solid rgba(232,213,168,.25);
+      padding: 6px 12px; border-radius: 3px; white-space: nowrap;
+    }
+    @media (max-width: 700px) {
+      .blog-card.featured { grid-column: span 1; grid-template-columns: 1fr; }
+      .blog-card.featured .featured-badge { grid-column: 1; grid-row: auto; justify-self: start; margin-bottom: 4px; }
+    }
+    .blog-card-tag {
+      font-size: 10px; letter-spacing: .15em; text-transform: uppercase;
+    }
+    .blog-card-tag.gold { color: var(--gold); }
+    .blog-card-tag.cyan { color: var(--cyan); }
+    .blog-card-title {
+      font-family: var(--font-serif); font-size: 20px;
+      font-weight: 400; line-height: 1.3; letter-spacing: -.01em;
+    }
+    .blog-card-excerpt { font-size: 13px; color: var(--grey-400); line-height: 1.6; }
+    .blog-card-date { font-size: 11px; color: var(--grey-600); margin-top: auto; padding-top: 16px; }
+
+    /* ── Contact ──────────────────────────────────────────── */
+    #contact {
+      border-top: 1px solid var(--grey-800);
+      text-align: center; min-height: 60vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+    }
+    .contact-heading {
+      font-family: var(--font-serif);
+      font-size: clamp(44px, 8vw, 112px);
+      font-weight: 400; line-height: .95;
+      letter-spacing: -.03em; margin-bottom: 48px;
+    }
+    .contact-heading em { font-style: italic; color: var(--gold); }
+    .contact-email {
+      display: inline-block; font-family: var(--font-serif);
+      font-size: clamp(16px, 2.2vw, 26px); color: var(--grey-200);
+      text-decoration: none; padding-bottom: 4px;
+      border-bottom: 1px solid var(--grey-600);
+      transition: color .3s, border-color .3s;
+    }
+    .contact-email:hover { color: var(--gold); border-color: var(--gold); }
+    .contact-socials {
+      display: flex; gap: 32px; margin-top: 52px; justify-content: center;
+    }
+    .social-link {
+      font-size: 11px; letter-spacing: .15em; text-transform: uppercase;
+      color: var(--grey-400); text-decoration: none; transition: color .3s;
+    }
+    .social-link:hover { color: var(--white); }
+
+    /* ── Marquee ──────────────────────────────────────────── */
+    .marquee-wrap {
+      overflow: hidden; padding: 18px 0;
+      border-top: 1px solid var(--grey-800);
+      border-bottom: 1px solid var(--grey-800);
+      background: var(--grey-900);
+    }
+    .marquee-track {
+      display: flex; animation: marquee 22s linear infinite; white-space: nowrap;
+    }
+    .marquee-item {
+      font-family: var(--font-serif); font-size: 12px; font-style: italic;
+      color: var(--grey-600); padding: 0 40px; flex-shrink: 0;
+    }
+    .marquee-dot { color: var(--gold); margin: 0 -20px; }
+    @keyframes marquee { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+
+    /* ── Footer ───────────────────────────────────────────── */
+    footer {
+      padding: 36px 48px; border-top: 1px solid var(--grey-800);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .footer-copy { font-size: 12px; color: var(--grey-600); }
+    .footer-right { display: flex; gap: 24px; align-items: center; }
+    .footer-tag { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--grey-600); }
+
+    /* ── Reveal ───────────────────────────────────────────── */
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity .9s var(--ease), transform .9s var(--ease); }
+    .reveal.visible { opacity: 1; transform: none; }
+    .reveal-delay-1 { transition-delay: .1s; }
+    .reveal-delay-2 { transition-delay: .22s; }
+    .reveal-delay-3 { transition-delay: .36s; }
+    .reveal-delay-4 { transition-delay: .5s; }
+
+    /* ── Responsive ───────────────────────────────────────── */
+    @media (max-width: 1000px) {
+      .data-grid { grid-template-columns: 1fr 1fr; }
+      .data-card.featured { grid-column: span 2; }
+    }
+    @media (max-width: 860px) {
+      nav { padding: 22px 24px; }
+      .nav-links { gap: 22px; }
+      section, #stack { padding: 90px 24px; }
+      #hero { padding: 0 24px 56px; }
+      #about { grid-template-columns: 1fr; gap: 40px; }
+      .about-right { order: -1; max-width: 280px; }
+      footer { padding: 28px 24px; }
+      .blog-grid { grid-template-columns: 1fr; }
+      .data-grid { grid-template-columns: 1fr; }
+      .data-card.featured { grid-column: span 1; }
+      .film-grid { grid-template-columns: 1fr 1fr; }
+      .film-item { grid-column: span 1 !important; }
+    }
+    @media (max-width: 560px) {
+      .nav-links { display: none; }
+      .film-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="grain"></div>
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+
+  <!-- ── Nav ── -->
+  <nav>
+    <a href="#" class="nav-logo">Shay Kashif</a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#film">Film & Photo</a></li>
+      <li><a href="#data">Data & Code</a></li>
+      <li><a href="#blog">Writing</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <button class="nav-theme-btn" id="themeToggle" aria-label="Toggle light/dark mode">
+      <!-- Moon — shown in dark mode (click → go light) -->
+      <svg class="icon-moon" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 9.2A5.2 5.2 0 016.8 2a5.2 5.2 0 100 10.4A5.15 5.15 0 0012 9.2z" fill="currentColor"/>
+      </svg>
+      <!-- Sun — shown in light mode (click → go dark) -->
+      <svg class="icon-sun" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="7" cy="7" r="2.8" fill="currentColor"/>
+        <line x1="7" y1="0.5" x2="7" y2="2.2"   stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        <line x1="7" y1="11.8" x2="7" y2="13.5"  stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        <line x1="0.5" y1="7" x2="2.2" y2="7"    stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        <line x1="11.8" y1="7" x2="13.5" y2="7"  stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        <line x1="2.3" y1="2.3" x2="3.5" y2="3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        <line x1="10.5" y1="10.5" x2="11.7" y2="11.7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        <line x1="11.7" y1="2.3" x2="10.5" y2="3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        <line x1="3.5" y1="10.5" x2="2.3" y2="11.7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+      <span id="themeLabel">Light</span>
+    </button>
+  </nav>
+
+  <!-- ── Hero ── -->
+  <section id="hero">
+
+    <!-- Cinematic photo background -->
+    <div class="hero-photo-stage" aria-hidden="true">
+      <img class="hero-photo-img hero-photo-a" src="" alt="" />
+      <img class="hero-photo-img hero-photo-b" src="" alt="" />
+      <div class="hero-photo-vignette"></div>
+      <div class="hero-photo-grade"></div>
+      <div class="hero-photo-scanlines"></div>
+    </div>
+
+    <h1 class="hero-title reveal reveal-delay-1">Shay<br /><em>Kashif</em></h1>
+    <p class="hero-eyebrow reveal reveal-delay-2">Photographer · Filmmaker · Data Scientist</p>
+    <div class="hero-sub reveal reveal-delay-3">
+      <div class="hero-pills">
+        <span class="hero-pill gold">📷 Photography &amp; Film</span>
+        <span class="hero-pill cyan">⌗ Data Science &amp; CS</span>
+      </div>
+      <div class="hero-scroll"><span class="scroll-line"></span>Scroll</div>
+    </div>
+  </section>
+
+  <!-- ── Marquee ── -->
+  <div class="marquee-wrap">
+    <div class="marquee-track">
+      <span class="marquee-item">Documentary</span><span class="marquee-item marquee-dot">·</span>
+      <span class="marquee-item">Machine Learning</span><span class="marquee-item marquee-dot">·</span>
+      <span class="marquee-item">Portrait</span><span class="marquee-item marquee-dot">·</span>
+      <span class="marquee-item">Python</span><span class="marquee-item marquee-dot">·</span>
+      <span class="marquee-item">Short Film</span><span class="marquee-item marquee-dot">·</span>
+      <span class="marquee-item">Data Visualization</span><span class="marquee-item marquee-dot">·</span>
+      <span class="marquee-item">Cinematography</span><span class="marquee-item marquee-dot">·</span>
+      <span class="marquee-item">Statistics</span><span class="marquee-item marquee-dot">·</span>
+      <span class="marquee-item">Editorial</span><span class="marquee-item marquee-dot">·</span>
+      <!-- duplicate -->
+      <span class="marquee-item">Documentary</span><span class="marquee-item marquee-dot">·</span>
+      <span class="marquee-item">Machine Learning</span><span class="marquee-item marquee-dot">·</span>
+      <span class="marquee-item">Portrait</span><span class="marquee-item marquee-dot">·</span>
+      <span class="marquee-item">Python</span><span class="marquee-item marquee-dot">·</span>
+      <span class="marquee-item">Short Film</span><span class="marquee-item marquee-dot">·</span>
+      <span class="marquee-item">Data Visualization</span><span class="marquee-item marquee-dot">·</span>
+      <span class="marquee-item">Cinematography</span><span class="marquee-item marquee-dot">·</span>
+      <span class="marquee-item">Statistics</span><span class="marquee-item marquee-dot">·</span>
+      <span class="marquee-item">Editorial</span><span class="marquee-item marquee-dot">·</span>
+    </div>
+  </div>
+
+  <!-- ── About ── -->
+  <section id="about">
+    <div class="about-left">
+      <p class="section-label gold reveal">About</p>
+      <h2 class="about-heading reveal reveal-delay-1">
+        Two ways of<br />seeing the <em>world</em>
+      </h2>
+      <div class="about-text reveal reveal-delay-2">
+        <p>I'm Shay Kashif — I split my time between framing shots and training models. Photography taught me to find signal in noise; data science gave me the tools to prove it.</p>
+        <p>Whether I'm behind a lens or inside a Jupyter notebook, I'm chasing the same thing: a clear, honest picture of how things really work.</p>
+      </div>
+      <div class="about-tags reveal reveal-delay-3">
+        <span class="about-tag gold">Photography</span>
+        <span class="about-tag gold">Filmmaking</span>
+        <span class="about-tag gold">Cinematography</span>
+        <span class="about-tag cyan">Python</span>
+        <span class="about-tag cyan">Machine Learning</span>
+        <span class="about-tag cyan">Data Visualization</span>
+        <span class="about-tag cyan">Statistics</span>
+      </div>
+      <div class="about-stats reveal reveal-delay-4">
+        <div class="stat-item">
+          <div class="stat-num" style="color:var(--gold)">8+</div>
+          <div class="stat-label">Yrs shooting</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num" style="color:var(--cyan)">40+</div>
+          <div class="stat-label">DS projects</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">12</div>
+          <div class="stat-label">Countries</div>
+        </div>
+      </div>
+    </div>
+    <div class="about-right reveal reveal-delay-2">
+      <div class="about-img-wrap">
+        <div class="about-img-placeholder">
+          <!-- Replace with: <img src="your-photo.jpg" style="width:100%;height:100%;object-fit:cover;" /> -->
+          <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
+            <circle cx="30" cy="20" r="10" stroke="white" stroke-width="1.5"/>
+            <path d="M10 52c0-11.046 8.954-20 20-20s20 8.954 20 20" stroke="white" stroke-width="1.5"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Film & Photography ── -->
+  <section id="film">
+    <p class="section-label gold reveal">Photography &amp; Film</p>
+    <div class="film-grid reveal">
+
+      <div class="film-item">
+        <div class="film-thumb">
+          <div class="film-bg"></div>
+          <div class="film-overlay">
+            <span class="film-tag">Documentary</span>
+            <span class="film-name">The Weight of Waiting</span>
+          </div>
+        </div>
+        <div class="film-list-row">
+          <span class="film-list-title">The Weight of Waiting</span>
+          <span class="film-list-meta">Documentary · 2024</span>
+        </div>
+      </div>
+
+      <div class="film-item">
+        <div class="film-thumb">
+          <div class="film-bg"></div>
+          <div class="film-overlay">
+            <span class="film-tag">Portrait Series</span>
+            <span class="film-name">Faces of Karachi</span>
+          </div>
+        </div>
+        <div class="film-list-row">
+          <span class="film-list-title">Faces of Karachi</span>
+          <span class="film-list-meta">Portrait · 2024</span>
+        </div>
+      </div>
+
+      <div class="film-item">
+        <div class="film-thumb">
+          <div class="film-bg"></div>
+          <div class="film-overlay">
+            <span class="film-tag">Short Film</span>
+            <span class="film-name">Blue Hour</span>
+          </div>
+        </div>
+        <div class="film-list-row">
+          <span class="film-list-title">Blue Hour</span>
+          <span class="film-list-meta">Short Film · 2023</span>
+        </div>
+      </div>
+
+      <div class="film-item">
+        <div class="film-thumb">
+          <div class="film-bg"></div>
+          <div class="film-overlay">
+            <span class="film-tag">Landscape</span>
+            <span class="film-name">Salt &amp; Dust</span>
+          </div>
+        </div>
+        <div class="film-list-row">
+          <span class="film-list-title">Salt &amp; Dust</span>
+          <span class="film-list-meta">Landscape · 2023</span>
+        </div>
+      </div>
+
+      <div class="film-item">
+        <div class="film-thumb">
+          <div class="film-bg"></div>
+          <div class="film-overlay">
+            <span class="film-tag">Editorial</span>
+            <span class="film-name">Grounded</span>
+          </div>
+        </div>
+        <div class="film-list-row">
+          <span class="film-list-title">Grounded</span>
+          <span class="film-list-meta">Editorial · 2023</span>
+        </div>
+      </div>
+
+      <div class="film-item">
+        <div class="film-thumb">
+          <div class="film-bg"></div>
+          <div class="film-overlay">
+            <span class="film-tag">Documentary</span>
+            <span class="film-name">Morning Markets</span>
+          </div>
+        </div>
+        <div class="film-list-row">
+          <span class="film-list-title">Morning Markets</span>
+          <span class="film-list-meta">Documentary · 2022</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── Data Science & Code ── -->
+  <section id="data">
+    <div class="data-intro reveal">
+      <p class="section-label cyan">Data Science &amp; Engineering</p>
+      <h2 class="data-intro-heading">
+        Finding patterns<br />in the <em>noise</em>
+      </h2>
+      <p class="data-intro-text">
+        From statistical modeling to neural networks — I build tools that make complex data legible. Especially interested in where computation meets human behavior.
+      </p>
+    </div>
+
+    <div class="data-grid reveal">
+
+      <!-- Featured wide card -->
+      <div class="data-card featured">
+        <div class="data-card-accent"></div>
+        <div class="data-card-tag">// Featured Project</div>
+        <div class="data-card-title">Urban Rhythm: Predicting City Mobility with Temporal Graph Networks</div>
+        <div class="data-card-desc">
+          Applied temporal graph neural networks to NYC taxi dataset (500M+ records) to model how human movement patterns shift across time. Achieved 18% improvement over LSTM baselines with interpretable attention weights.
+        </div>
+        <div class="data-card-code"><span class="cm"># Core model architecture</span>
+<span class="kw">class</span> <span class="fn">TemporalGNN</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, in_ch, hidden, heads=<span class="st">8</span>):
+        self.tgat = TemporalGraphAttn(in_ch, hidden, heads)
+        self.lstm = nn.LSTM(hidden, hidden, batch_first=<span class="kw">True</span>)
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, x, edge_idx, timestamps):
+        h = self.tgat(x, edge_idx, timestamps)
+        <span class="kw">return</span> self.lstm(h)[<span class="st">0</span>]</div>
+        <div class="data-card-stack">
+          <span class="stack-chip">PyTorch</span>
+          <span class="stack-chip">PyG</span>
+          <span class="stack-chip">NumPy</span>
+          <span class="stack-chip">Pandas</span>
+          <span class="stack-chip">Plotly</span>
+        </div>
+        <div class="data-card-footer">
+          <span class="data-card-year">2024</span>
+          <span class="data-card-arrow">↗</span>
+        </div>
+      </div>
+
+      <!-- Regular card -->
+      <div class="data-card">
+        <div class="data-card-accent"></div>
+        <div class="data-card-tag">// Computer Vision</div>
+        <div class="data-card-title">Cinematic Frame Classifier</div>
+        <div class="data-card-desc">
+          Fine-tuned a vision transformer to classify cinematographic shot types (close-up, wide, Dutch angle) with 94.2% accuracy. Built dataset of 12k labeled frames from Criterion films.
+        </div>
+        <div class="data-card-stack">
+          <span class="stack-chip">PyTorch</span>
+          <span class="stack-chip">ViT</span>
+          <span class="stack-chip">OpenCV</span>
+          <span class="stack-chip">HuggingFace</span>
+        </div>
+        <div class="data-card-footer">
+          <span class="data-card-year">2024</span>
+          <span class="data-card-arrow">↗</span>
+        </div>
+      </div>
+
+      <!-- Regular card -->
+      <div class="data-card">
+        <div class="data-card-accent"></div>
+        <div class="data-card-tag">// NLP</div>
+        <div class="data-card-title">Screenplay Sentiment Arc Analysis</div>
+        <div class="data-card-desc">
+          Analyzed emotional arcs in 800 Hollywood screenplays using BERT embeddings. Identified 6 archetypal story shapes and correlated with box office performance.
+        </div>
+        <div class="data-card-stack">
+          <span class="stack-chip">Python</span>
+          <span class="stack-chip">BERT</span>
+          <span class="stack-chip">scikit-learn</span>
+          <span class="stack-chip">seaborn</span>
+        </div>
+        <div class="data-card-footer">
+          <span class="data-card-year">2023</span>
+          <span class="data-card-arrow">↗</span>
+        </div>
+      </div>
+
+      <!-- Regular card -->
+      <div class="data-card">
+        <div class="data-card-accent"></div>
+        <div class="data-card-tag">// Statistics</div>
+        <div class="data-card-title">Bayesian Exposure Optimizer</div>
+        <div class="data-card-desc">
+          Built a Bayesian optimizer for camera exposure settings in dynamic lighting — models uncertainty in highlight recovery across sensor types using MCMC sampling.
+        </div>
+        <div class="data-card-stack">
+          <span class="stack-chip">PyMC</span>
+          <span class="stack-chip">NumPy</span>
+          <span class="stack-chip">Matplotlib</span>
+          <span class="stack-chip">SciPy</span>
+        </div>
+        <div class="data-card-footer">
+          <span class="data-card-year">2023</span>
+          <span class="data-card-arrow">↗</span>
+        </div>
+      </div>
+
+      <!-- Regular card -->
+      <div class="data-card">
+        <div class="data-card-accent"></div>
+        <div class="data-card-tag">// Data Viz</div>
+        <div class="data-card-title">The Golden Hour Atlas</div>
+        <div class="data-card-desc">
+          Interactive globe visualization mapping golden hour windows for 5,000 cities worldwide, with topographic shadow modeling and weather probability overlays.
+        </div>
+        <div class="data-card-stack">
+          <span class="stack-chip">D3.js</span>
+          <span class="stack-chip">Three.js</span>
+          <span class="stack-chip">Python</span>
+          <span class="stack-chip">FastAPI</span>
+        </div>
+        <div class="data-card-footer">
+          <span class="data-card-year">2022</span>
+          <span class="data-card-arrow">↗</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── Stack / Skills ── -->
+  <section id="stack">
+    <p class="section-label cyan reveal">Skills &amp; Stack</p>
+    <div class="reveal">
+      <div class="stack-row">
+        <span class="stack-name">Python / NumPy</span>
+        <div class="stack-bar-wrap"><div class="stack-bar" data-width="95"></div></div>
+        <span class="stack-pct">95%</span>
+      </div>
+      <div class="stack-row">
+        <span class="stack-name">PyTorch / ML</span>
+        <div class="stack-bar-wrap"><div class="stack-bar" data-width="88"></div></div>
+        <span class="stack-pct">88%</span>
+      </div>
+      <div class="stack-row">
+        <span class="stack-name">Data Visualization</span>
+        <div class="stack-bar-wrap"><div class="stack-bar" data-width="90"></div></div>
+        <span class="stack-pct">90%</span>
+      </div>
+      <div class="stack-row">
+        <span class="stack-name">Statistics</span>
+        <div class="stack-bar-wrap"><div class="stack-bar" data-width="85"></div></div>
+        <span class="stack-pct">85%</span>
+      </div>
+      <div class="stack-row">
+        <span class="stack-name">Cinematography</span>
+        <div class="stack-bar-wrap"><div class="stack-bar gold-bar" data-width="92"></div></div>
+        <span class="stack-pct">92%</span>
+      </div>
+      <div class="stack-row">
+        <span class="stack-name">Film Editing</span>
+        <div class="stack-bar-wrap"><div class="stack-bar gold-bar" data-width="80"></div></div>
+        <span class="stack-pct">80%</span>
+      </div>
+      <div class="stack-row">
+        <span class="stack-name">Photography</span>
+        <div class="stack-bar-wrap"><div class="stack-bar gold-bar" data-width="96"></div></div>
+        <span class="stack-pct">96%</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Writing ── -->
+  <section id="blog">
+    <p class="section-label reveal" style="color:var(--grey-200)">Writing</p>
+    <div class="blog-grid reveal">
+
+      <a href="article-masthead.html" class="blog-card featured">
+        <span class="featured-badge">Published · The Exonian</span>
+        <span class="blog-card-tag cyan">Research · Data Science</span>
+        <span class="blog-card-title">What the Masthead Tells Us: Diversity &amp; Representation in Academic Extracurriculars at Exeter</span>
+        <span class="blog-card-excerpt">A longitudinal study of ethnic and gender representation in The Exonian and DWDS leadership, using poll data, demographic inference, and social psychology research to explain the structural roots of inequity.</span>
+        <span class="blog-card-date">2025–26</span>
+      </a>
+
+      <a href="#" class="blog-card">
+        <span class="blog-card-tag gold">Photography</span>
+        <span class="blog-card-title">On Shooting in Silence — What Removing Sound Taught Me About Light</span>
+        <span class="blog-card-excerpt">Spending a month shooting without looking at the footage changed everything about how I see.</span>
+        <span class="blog-card-date">Mar 2026</span>
+      </a>
+
+      <a href="#" class="blog-card">
+        <span class="blog-card-tag cyan">Data Science</span>
+        <span class="blog-card-title">Why Every Photographer Should Learn Bayesian Statistics</span>
+        <span class="blog-card-excerpt">Uncertainty quantification has more in common with exposure judgment than you might think.</span>
+        <span class="blog-card-date">Feb 2026</span>
+      </a>
+
+      <a href="#" class="blog-card">
+        <span class="blog-card-tag gold">Film</span>
+        <span class="blog-card-title">Pakistan Through a Lens: Notes from Three Weeks on the Road</span>
+        <span class="blog-card-excerpt">Lahore to Hunza — what a camera forces you to notice that you'd otherwise miss.</span>
+        <span class="blog-card-date">Oct 2025</span>
+      </a>
+
+      <a href="#" class="blog-card">
+        <span class="blog-card-tag cyan">Machine Learning</span>
+        <span class="blog-card-title">Training a Model to See Like a Cinematographer</span>
+        <span class="blog-card-excerpt">What happens when you fine-tune a vision model on Kubrick, Tarkovsky, and Wong Kar-wai.</span>
+        <span class="blog-card-date">Aug 2025</span>
+      </a>
+
+      <a href="#" class="blog-card">
+        <span class="blog-card-tag gold">Philosophy</span>
+        <span class="blog-card-title">The Camera I Almost Gave Up, and Why I'm Glad I Didn't</span>
+        <span class="blog-card-excerpt">On creative burnout, perfectionism, and finding your way back through constraint.</span>
+        <span class="blog-card-date">Jun 2025</span>
+      </a>
+
+      <a href="#" class="blog-card">
+        <span class="blog-card-tag cyan">Data Viz</span>
+        <span class="blog-card-title">Mapping the World's Golden Hour — A Data Story</span>
+        <span class="blog-card-excerpt">How I built a global atlas of the best light on Earth using public weather and solar data.</span>
+        <span class="blog-card-date">May 2025</span>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ── Contact ── -->
+  <section id="contact">
+    <h2 class="contact-heading reveal">
+      Let's make<br /><em>something</em>
+    </h2>
+    <a href="mailto:shay@shaykashif.com" class="contact-email reveal reveal-delay-1">shay@shaykashif.com</a>
+    <div class="contact-socials reveal reveal-delay-2">
+      <a href="#" class="social-link">Instagram</a>
+      <a href="#" class="social-link">Vimeo</a>
+      <a href="#" class="social-link">GitHub</a>
+      <a href="#" class="social-link">LinkedIn</a>
+      <a href="#" class="social-link">Letterboxd</a>
+    </div>
+  </section>
+
+  <!-- ── Footer ── -->
+  <footer>
+    <span class="footer-copy">© 2026 Shay Kashif. All rights reserved.</span>
+    <div class="footer-right">
+      <span class="footer-tag">shaykashif.com</span>
+    </div>
+  </footer>
+
+  <script>
+    // ── Hero Photo Carousel ────────────────────────────────
+    (function () {
+      const files = [
+        'Banner Images/R1-03816-003A.jpg',
+        'Banner Images/R1-03816-010A.jpg',
+        'Banner Images/R1-03816-013A.jpg',
+        'Banner Images/R1-03816-019A.jpg',
+        'Banner Images/R1-03816-026A.jpg',
+        'Banner Images/R1-03816-032A.jpg',
+      ];
+
+      // Shuffle so each visit starts on a random image
+      const imgs = files.sort(() => Math.random() - 0.5);
+
+      const layerA = document.querySelector('.hero-photo-a');
+      const layerB = document.querySelector('.hero-photo-b');
+
+      // Preload all into browser cache up front
+      imgs.forEach(src => { const p = new Image(); p.src = src; });
+
+      let idx  = 0;
+      let onA  = true;   // which layer is currently visible
+
+      // Initial reveal — fade in first image after it loads
+      layerA.onload = () => {
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          layerA.style.opacity = '1';
+        }));
+      };
+      layerA.src = imgs[0];
+
+      // Crossfade to next photo
+      function advance() {
+        idx = (idx + 1) % imgs.length;
+        const next = onA ? layerB : layerA;
+        const curr = onA ? layerA : layerB;
+        next.src = imgs[idx];
+        // Brief tick so browser can start decode before opacity jump
+        requestAnimationFrame(() => {
+          next.style.opacity = '1';
+          curr.style.opacity = '0';
+        });
+        onA = !onA;
+      }
+
+      setInterval(advance, 6000);   // swap every 6 s
+    })();
+
+    // ── Theme Toggle ───────────────────────────────────────
+    (function () {
+      const btn   = document.getElementById('themeToggle');
+      const label = document.getElementById('themeLabel');
+      const saved = localStorage.getItem('sk-theme');
+
+      function applyTheme(theme) {
+        if (theme === 'light') {
+          document.body.classList.add('light');
+          label.textContent = 'Dark';
+        } else {
+          document.body.classList.remove('light');
+          label.textContent = 'Light';
+        }
+      }
+
+      // Restore saved preference (default: dark)
+      applyTheme(saved || 'dark');
+
+      btn.addEventListener('click', () => {
+        const next = document.body.classList.contains('light') ? 'dark' : 'light';
+        localStorage.setItem('sk-theme', next);
+        applyTheme(next);
+      });
+    })();
+
+    // ── Cursor ─────────────────────────────────────────────
+    const cursor = document.getElementById('cursor');
+    const ring   = document.getElementById('cursor-ring');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+    });
+    (function lerp() {
+      rx += (mx - rx) * 0.1;
+      ry += (my - ry) * 0.1;
+      ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+      requestAnimationFrame(lerp);
+    })();
+    document.querySelectorAll('a, button, .film-item, .data-card').forEach(el => {
+      el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+      el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+    });
+
+    // ── Scroll Reveal ──────────────────────────────────────
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+    setTimeout(() => document.querySelectorAll('#hero .reveal').forEach(el => el.classList.add('visible')), 150);
+
+    // ── Parallax Hero ──────────────────────────────────────
+    const heroTitle   = document.querySelector('.hero-title');
+    const heroEyebrow = document.querySelector('.hero-eyebrow');
+    const heroSub     = document.querySelector('.hero-sub');
+    window.addEventListener('scroll', () => {
+      const y = window.scrollY;
+      if (heroTitle)   heroTitle.style.transform   = `translateY(${y * 0.22}px)`;
+      if (heroEyebrow) heroEyebrow.style.transform = `translateY(${y * 0.22}px)`;
+      if (heroSub)     heroSub.style.transform     = `translateY(${y * 0.22}px)`;
+    });
+
+    // ── Skill bars animate in ──────────────────────────────
+    const barObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.querySelectorAll('.stack-bar').forEach(bar => {
+            bar.style.width = bar.dataset.width + '%';
+          });
+          barObs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.2 });
+    document.querySelectorAll('#stack').forEach(s => barObs.observe(s));
+  </script>
+</body>
+</html>
