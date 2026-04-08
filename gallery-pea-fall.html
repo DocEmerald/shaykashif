@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PEA Fall — Shay Kashif</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --black: #090909; --grey-900: #111111; --grey-800: #1a1a1a;
+      --grey-700: #222222; --grey-600: #333333; --grey-400: #666666;
+      --grey-200: #999999; --grey-100: #cccccc; --white: #f2f2f2;
+      --gold: #e8d5a8; --cyan: #7ed4e6;
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-sans: 'Inter', system-ui, sans-serif;
+      --ease: cubic-bezier(0.76, 0, 0.24, 1);
+      --pad: clamp(24px, 5vw, 80px);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+    body { background: var(--black); color: var(--white); font-family: var(--font-sans); font-weight: 300; line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+    ::selection { background: var(--gold); color: var(--black); }
+    a { color: inherit; text-decoration: none; }
+    #grain { position: fixed; inset: -50%; width: 200%; height: 200%; pointer-events: none; z-index: 9000; opacity: 0.03; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); animation: grain 0.5s steps(1) infinite; }
+    @keyframes grain { 0%,100%{transform:translate(0,0)} 10%{transform:translate(-2%,-3%)} 20%{transform:translate(3%,2%)} 30%{transform:translate(-1%,4%)} 40%{transform:translate(4%,-1%)} 50%{transform:translate(-3%,3%)} 60%{transform:translate(2%,-4%)} 70%{transform:translate(-4%,1%)} 80%{transform:translate(1%,-2%)} 90%{transform:translate(-2%,4%)} }
+    nav { position: sticky; top: 0; z-index: 500; padding: 18px var(--pad); display: flex; align-items: center; justify-content: space-between; background: rgba(9,9,9,0.88); backdrop-filter: blur(20px) saturate(1.4); -webkit-backdrop-filter: blur(20px) saturate(1.4); border-bottom: 1px solid var(--grey-800); }
+    .nav-back { display: inline-flex; align-items: center; gap: 9px; font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: var(--grey-400); transition: color .25s; }
+    .nav-back:hover { color: var(--white); }
+    .nav-site { font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: var(--grey-600); }
+    .gallery-hero { padding: clamp(48px, 8vh, 88px) var(--pad) clamp(40px, 6vh, 64px); border-bottom: 1px solid var(--grey-800); max-width: 1200px; }
+    .gallery-label { font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: var(--gold); margin-bottom: 20px; }
+    .gallery-title { font-family: var(--font-serif); font-size: clamp(40px, 7vw, 96px); font-weight: 400; line-height: .9; letter-spacing: -.03em; margin-bottom: 40px; }
+    .gallery-title em { font-style: italic; color: var(--grey-400); }
+    .gallery-meta { display: flex; gap: 32px; flex-wrap: wrap; padding-top: 32px; border-top: 1px solid var(--grey-800); }
+    .meta-item { display: flex; flex-direction: column; gap: 5px; }
+    .meta-key { font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--grey-600); }
+    .meta-val { font-size: 13px; color: var(--grey-200); }
+    .gallery-desc { max-width: 600px; font-size: 14px; color: var(--grey-400); line-height: 1.8; margin-top: 28px; }
+    .photo-grid { columns: 3 280px; column-gap: 3px; padding: 3px; }
+    .photo-cell { break-inside: avoid; margin-bottom: 3px; cursor: zoom-in; position: relative; overflow: hidden; }
+    .photo-cell img { width: 100%; display: block; filter: contrast(1.05) saturate(0.75); transition: filter .5s ease, transform .6s var(--ease); }
+    .photo-cell:hover img { filter: contrast(1.08) saturate(0.9); transform: scale(1.02); }
+    .photo-caption { position: absolute; bottom: 0; left: 0; right: 0; padding: 24px 16px 14px; background: linear-gradient(transparent, rgba(0,0,0,.72)); opacity: 0; transition: opacity .3s; font-size: 11px; color: rgba(242,242,242,.8); letter-spacing: .06em; }
+    .photo-cell:hover .photo-caption { opacity: 1; }
+    .lightbox { position: fixed; inset: 0; z-index: 8000; background: rgba(9,9,9,0); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .35s var(--ease), background .35s; }
+    .lightbox.open { opacity: 1; pointer-events: all; background: rgba(9,9,9,.96); }
+    .lightbox img { max-width: 92vw; max-height: 92vh; object-fit: contain; display: block; filter: contrast(1.06) saturate(0.8); }
+    .lb-close { position: fixed; top: 24px; right: 32px; font-size: 24px; color: var(--grey-400); cursor: pointer; z-index: 8001; transition: color .2s; background: none; border: none; line-height: 1; }
+    .lb-close:hover { color: var(--white); }
+    .lb-prev, .lb-next { position: fixed; top: 50%; transform: translateY(-50%); font-size: 28px; color: var(--grey-600); cursor: pointer; z-index: 8001; transition: color .2s; background: none; border: none; padding: 16px; }
+    .lb-prev { left: 16px; } .lb-next { right: 16px; }
+    .lb-prev:hover, .lb-next:hover { color: var(--white); }
+    .lb-caption { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); font-size: 11px; color: var(--grey-400); letter-spacing: .1em; white-space: nowrap; }
+    .lb-counter { position: fixed; top: 28px; left: 50%; transform: translateX(-50%); font-size: 11px; color: var(--grey-600); letter-spacing: .1em; }
+  </style>
+</head>
+<body>
+<div id="grain"></div>
+<nav>
+  <a href="index.html" class="nav-back">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Back
+  </a>
+  <span class="nav-site">shaykas.com</span>
+</nav>
+
+<div class="gallery-hero">
+  <p class="gallery-label">Photography · 35mm</p>
+  <h1 class="gallery-title">PEA Fall<br /><em>Exeter, New Hampshire</em></h1>
+  <div class="gallery-meta">
+    <div class="meta-item"><span class="meta-key">Location</span><span class="meta-val">Phillips Exeter Academy</span></div>
+    <div class="meta-item"><span class="meta-key">Season</span><span class="meta-val">Autumn 2025</span></div>
+    <div class="meta-item"><span class="meta-key">Film</span><span class="meta-val">Fujifilm 400</span></div>
+    <div class="meta-item"><span class="meta-key">Format</span><span class="meta-val">35mm</span></div>
+  </div>
+  <p class="gallery-desc">Fall at Exeter—the campus as it turns gold, people in windows, afternoons between classes. Shot on film.</p>
+</div>
+
+<div class="photo-grid" id="grid"></div>
+
+<div class="lightbox" id="lightbox">
+  <button class="lb-close" id="lbClose">✕</button>
+  <button class="lb-prev" id="lbPrev">‹</button>
+  <img id="lbImg" src="" alt="" />
+  <button class="lb-next" id="lbNext">›</button>
+  <span class="lb-counter" id="lbCounter"></span>
+  <span class="lb-caption" id="lbCaption"></span>
+</div>
+
+<script>
+const GALLERY = {
+  folder: "PEA Fall",
+  images: [
+    { src: "R1-00671-030A.JPEG", caption: "" },
+    { src: "R1-00673-004A.JPEG", caption: "" },
+    { src: "R1-00673-007A.JPEG", caption: "" },
+    { src: "R1-00673-010A.JPEG", caption: "" },
+    { src: "R1-00673-034A.JPEG", caption: "" },
+    { src: "R1-00674-0001.JPEG", caption: "" },
+    { src: "R1-00674-0010.JPG",  caption: "" },
+    { src: "R1-00674-0011.JPEG", caption: "" },
+    { src: "R1-00674-0014.JPEG", caption: "" },
+    { src: "R1-00674-0015.JPEG", caption: "" },
+    { src: "R1-00674-0016.JPEG", caption: "" },
+    { src: "R1-00674-0017.JPEG", caption: "" },
+    { src: "R1-00674-0036-2.JPEG", caption: "" },
+    { src: "R1-00674-0036.JPEG", caption: "" },
+    { src: "R1-00674-0037.JPEG", caption: "" },
+    { src: "R1-01134-017A.jpg",  caption: "" },
+    { src: "R1-01134-020A.jpg",  caption: "" },
+    { src: "R1-01134-021A.jpg",  caption: "" },
+    { src: "R1-01134-023A.jpg",  caption: "" },
+    { src: "R1-01134-024A.jpg",  caption: "" },
+    { src: "R1-01134-025A.jpg",  caption: "" },
+    { src: "R1-01134-026A.jpg",  caption: "" }
+  ]
+};
+
+const grid = document.getElementById('grid');
+const lightbox = document.getElementById('lightbox');
+const lbImg = document.getElementById('lbImg');
+const lbCaption = document.getElementById('lbCaption');
+const lbCounter = document.getElementById('lbCounter');
+let current = 0;
+
+GALLERY.images.forEach((img, i) => {
+  const cell = document.createElement('div');
+  cell.className = 'photo-cell';
+  cell.innerHTML = `<img src="${GALLERY.folder}/${img.src}" alt="${img.caption}" loading="lazy" />${img.caption ? `<span class="photo-caption">${img.caption}</span>` : ''}`;
+  cell.addEventListener('click', () => openLightbox(i));
+  grid.appendChild(cell);
+});
+
+function openLightbox(i) {
+  current = i;
+  updateLightbox();
+  lightbox.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+  lightbox.classList.remove('open');
+  document.body.style.overflow = '';
+}
+function updateLightbox() {
+  const img = GALLERY.images[current];
+  lbImg.src = `${GALLERY.folder}/${img.src}`;
+  lbCaption.textContent = img.caption || '';
+  lbCounter.textContent = `${current + 1} / ${GALLERY.images.length}`;
+}
+function prev() { current = (current - 1 + GALLERY.images.length) % GALLERY.images.length; updateLightbox(); }
+function next() { current = (current + 1) % GALLERY.images.length; updateLightbox(); }
+
+document.getElementById('lbClose').addEventListener('click', closeLightbox);
+document.getElementById('lbPrev').addEventListener('click', prev);
+document.getElementById('lbNext').addEventListener('click', next);
+lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+document.addEventListener('keydown', e => {
+  if (!lightbox.classList.contains('open')) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowLeft') prev();
+  if (e.key === 'ArrowRight') next();
+});
+let touchStartX = 0;
+lightbox.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+lightbox.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (Math.abs(dx) > 40) { dx < 0 ? next() : prev(); }
+});
+</script>
+</body>
+</html>
+  

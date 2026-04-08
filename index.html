@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Shay Kashif — Photographer, Filmmaker & Data Scientist</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet" />
@@ -57,6 +58,8 @@
       --gold:     #e8d5a8;
       --cyan:     #7ed4e6;
     }
+    /* Keep hero title text white even in light mode */
+    body.light #hero .hero-title { color: #f2f2f2; }
     /* Grain is subtler on light backgrounds */
     body.light #grain { opacity: 0.018; }
     /* Marquee border accents in light mode */
@@ -103,6 +106,11 @@
     }
 
     /* ── Cursor ───────────────────────────────────────────── */
+    /* Hide custom cursor on touch devices */
+    @media (hover: none) {
+      #cursor, #cursor-ring { display: none !important; }
+      body { cursor: auto !important; }
+    }
     #cursor {
       position: fixed; width: 10px; height: 10px;
       background: var(--white); border-radius: 50%;
@@ -303,7 +311,42 @@
     }
     .about-tag.gold { background: rgba(232,213,168,.08); color: var(--gold); border: 1px solid rgba(232,213,168,.2); }
     .about-tag.cyan { background: rgba(126,212,230,.07); color: var(--cyan); border: 1px solid rgba(126,212,230,.18); }
-    .about-img-wrap { aspect-ratio: 3/4; max-height: 480px; overflow: hidden; position: relative; }
+    .about-img-wrap { position: relative; width: 100%; }
+    /* ── Headshot strip ── */
+    .headshot-strip {
+      position: relative; width: 100%;
+      height: clamp(420px, 62vh, 640px);
+      overflow: hidden; cursor: pointer; user-select: none;
+    }
+    .headshot-card {
+      position: absolute; top: 0; bottom: 0; overflow: hidden;
+      will-change: left, width, opacity, top, bottom;
+      transition: left 0.65s cubic-bezier(0.4,0,0.2,1),
+                  width 0.65s cubic-bezier(0.4,0,0.2,1),
+                  top 0.65s ease, bottom 0.65s ease,
+                  opacity 0.65s ease;
+    }
+    .headshot-card img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
+    /* Position states */
+    .headshot-card.pos-0 { left: 0%;   width: 62%; top: 0%;  bottom: 0%;  opacity: 1;    z-index: 4; }
+    .headshot-card.pos-1 { left: 60%;  width: 26%; top: 6%;  bottom: 6%;  opacity: 0.55; z-index: 3; }
+    .headshot-card.pos-2 { left: 80%;  width: 17%; top: 12%; bottom: 12%; opacity: 0.3;  z-index: 2; }
+    .headshot-card.pos-3 { left: 100%; width: 14%; top: 16%; bottom: 16%; opacity: 0;    z-index: 1; }
+    /* Exit: slide out to the left */
+    .headshot-card.exit  { left: -65%; width: 62%; top: 0%;  bottom: 0%;  opacity: 0;    z-index: 5; }
+    /* Hover arrow hint */
+    .headshot-cycle-hint {
+      position: absolute; right: 38%; top: 50%;
+      transform: translateY(-50%);
+      color: rgba(255,255,255,0.7); font-size: 18px;
+      z-index: 10; pointer-events: none;
+      opacity: 0; transition: opacity 0.3s;
+      background: rgba(0,0,0,0.28); border-radius: 50%;
+      width: 34px; height: 34px;
+      display: flex; align-items: center; justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+    .headshot-strip:hover .headshot-cycle-hint { opacity: 1; }
     .about-img-placeholder {
       width: 100%; height: 100%; background: var(--grey-800);
       display: flex; align-items: center; justify-content: center;
@@ -332,32 +375,41 @@
     .film-item { position: relative; overflow: hidden; cursor: none; }
     .film-item:nth-child(1) { grid-column: span 7; }
     .film-item:nth-child(2) { grid-column: span 5; }
-    .film-item:nth-child(3) { grid-column: span 4; }
-    .film-item:nth-child(4) { grid-column: span 8; }
-    .film-item:nth-child(5) { grid-column: span 5; }
-    .film-item:nth-child(6) { grid-column: span 7; }
+    .film-item:nth-child(3) { grid-column: span 5; }
+    .film-item:nth-child(4) { grid-column: span 7; }
+    .film-item:nth-child(5) { grid-column: span 12; }
 
     .film-thumb {
-      width: 100%; aspect-ratio: 16/10; position: relative;
+      width: 100%; aspect-ratio: 16/10; position: relative; overflow: hidden;
     }
     .film-item:nth-child(1) .film-thumb { aspect-ratio: 4/3; }
     .film-item:nth-child(2) .film-thumb { aspect-ratio: 3/4; }
     .film-item:nth-child(3) .film-thumb { aspect-ratio: 4/5; }
-    .film-item:nth-child(4) .film-thumb { aspect-ratio: 8/5; }
-    .film-item:nth-child(5) .film-thumb { aspect-ratio: 5/6; }
-    .film-item:nth-child(6) .film-thumb { aspect-ratio: 7/5; }
+    .film-item:nth-child(4) .film-thumb { aspect-ratio: 7/4; }
+    .film-item:nth-child(5) .film-thumb { aspect-ratio: 16/7; }
 
     .film-bg {
       position: absolute; inset: 0;
       transition: transform .9s var(--ease);
     }
     .film-item:hover .film-bg { transform: scale(1.06); }
+    /* Live film items — real photo cover */
+    .film-item--live { cursor: pointer; display: block; }
+    .film-cover {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%; object-fit: cover;
+      filter: contrast(1.08) saturate(0.62) brightness(0.84);
+      transition: transform .9s var(--ease), filter .5s ease;
+    }
+    .film-item--live:hover .film-cover {
+      transform: scale(1.06);
+      filter: contrast(1.1) saturate(0.72) brightness(0.9);
+    }
     .film-item:nth-child(1) .film-bg { background: linear-gradient(160deg,#1a0f08 0%,#2d1a0a 50%,#0f0908 100%); }
     .film-item:nth-child(2) .film-bg { background: linear-gradient(135deg,#090e1a 0%,#0d1520 100%); }
     .film-item:nth-child(3) .film-bg { background: linear-gradient(160deg,#0f1a12 0%,#08120a 100%); }
     .film-item:nth-child(4) .film-bg { background: linear-gradient(160deg,#1a1008 0%,#2a1800 50%,#100a04 100%); }
-    .film-item:nth-child(5) .film-bg { background: linear-gradient(135deg,#1a1520 0%,#0d0a1c 100%); }
-    .film-item:nth-child(6) .film-bg { background: linear-gradient(160deg,#0f100a 0%,#1a1500 50%,#0a0d08 100%); }
+    .film-item:nth-child(5) .film-bg { background: linear-gradient(135deg,#0f1208 0%,#1a1a0a 50%,#0a0f08 100%); }
 
     .film-bg::after {
       content: ''; position: absolute; inset: 0;
@@ -368,26 +420,30 @@
     }
     .film-overlay {
       position: absolute; inset: 0;
-      background: linear-gradient(to top, rgba(0,0,0,.75) 0%, transparent 55%);
-      display: flex; flex-direction: column; justify-content: flex-end;
+      background: linear-gradient(to top, rgba(0,0,0,.78) 0%, transparent 58%);
+      display: flex; flex-direction: row; align-items: flex-end; justify-content: space-between;
       padding: 20px; opacity: 0;
       transition: opacity .4s var(--ease);
     }
     .film-item:hover .film-overlay { opacity: 1; }
+    .film-overlay-left  { display: flex; flex-direction: column; }
+    .film-overlay-right { display: flex; flex-direction: column; align-items: flex-end; text-align: right; }
     .film-tag {
       font-size: 10px; letter-spacing: .15em; text-transform: uppercase;
-      color: var(--gold); margin-bottom: 4px;
+      color: var(--gold); margin-bottom: 5px;
     }
     .film-name {
       font-family: var(--font-serif); font-size: 20px;
       font-weight: 400; color: var(--white); line-height: 1.2;
     }
-    .film-list-row {
-      display: flex; justify-content: space-between; align-items: baseline;
-      padding: 18px 0; border-bottom: 1px solid var(--grey-800);
+    .film-stock {
+      font-size: 10px; letter-spacing: .13em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 5px;
     }
-    .film-list-title { font-family: var(--font-serif); font-size: 16px; font-weight: 400; }
-    .film-list-meta { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--grey-400); }
+    .film-year {
+      font-size: 10px; letter-spacing: .13em; text-transform: uppercase;
+      color: rgba(242,242,242,.55);
+    }
 
     /* ── DATA / CODE SECTION ──────────────────────────────── */
     #data { border-top: 1px solid var(--grey-800); background: var(--black); }
@@ -418,6 +474,7 @@
       cursor: none;
     }
     .data-card:hover { background: var(--grey-900); }
+    a.data-card { color: inherit; text-decoration: none; }
 
     .data-card-accent {
       position: absolute; top: 0; left: 0;
@@ -746,8 +803,8 @@
         Two ways of<br />seeing the <em>world</em>
       </h2>
       <div class="about-text reveal reveal-delay-2">
-        <p>I'm Shay Kashif — I split my time between framing shots and training models. Photography taught me to find signal in noise; data science gave me the tools to prove it.</p>
-        <p>Whether I'm behind a lens or inside a Jupyter notebook, I'm chasing the same thing: a clear, honest picture of how things really work.</p>
+        <p>Hey, I'm Shay! I split my time between framing shots and tinkering with computers. Photography taught me to find signal in noise; data science gave me the tools to prove it.</p>
+        <p>Whether I'm behind a lens or inside a spreadsheet, I'm chasing the same thing: a clear, honest picture of how things really work, inside and out.</p>
       </div>
       <div class="about-tags reveal reveal-delay-3">
         <span class="about-tag gold">Photography</span>
@@ -760,24 +817,37 @@
       </div>
       <div class="about-stats reveal reveal-delay-4">
         <div class="stat-item">
-          <div class="stat-num" style="color:var(--gold)">8+</div>
+          <div class="stat-num" style="color:var(--gold)">12+</div>
           <div class="stat-label">Yrs shooting</div>
         </div>
         <div class="stat-item">
-          <div class="stat-num" style="color:var(--cyan)">40+</div>
+          <div class="stat-num" style="color:var(--cyan)">20+</div>
           <div class="stat-label">DS projects</div>
         </div>
         <div class="stat-item">
-          <div class="stat-num">12</div>
+          <div class="stat-num">5</div>
           <div class="stat-label">Countries</div>
         </div>
       </div>
     </div>
     <div class="about-right reveal reveal-delay-2">
       <div class="about-img-wrap">
-        <img src="Headshot/Headshot.jpg"
-             alt="Shay Kashif"
-             style="width:100%;height:100%;object-fit:cover;object-position:center 15%;display:block;" />
+        <div class="headshot-strip" id="headshotStrip">
+          <!-- pos-3 = queued off right, pos-0 = active -->
+          <div class="headshot-card pos-3">
+            <img src="Headshot/Headshot5.jpg" alt="Shay Kashif" style="object-position:center 38%" />
+          </div>
+          <div class="headshot-card pos-2">
+            <img src="Headshot/Headshot3.jpg" alt="Shay Kashif" style="object-position:center 30%" />
+          </div>
+          <div class="headshot-card pos-1">
+            <img src="Headshot/Headshot2.jpg" alt="Shay Kashif" style="object-position:center 18%" />
+          </div>
+          <div class="headshot-card pos-0">
+            <img src="Headshot/Headshot.jpg" alt="Shay Kashif" style="object-position:center top" />
+          </div>
+          <div class="headshot-cycle-hint">›</div>
+        </div>
       </div>
     </div>
   </section>
@@ -787,89 +857,86 @@
     <p class="section-label gold reveal">Photography &amp; Film</p>
     <div class="film-grid reveal">
 
-      <div class="film-item">
+      <a class="film-item film-item--live" href="gallery-hyde-park.html">
         <div class="film-thumb">
-          <div class="film-bg"></div>
+          <img class="film-cover" src="HydePark/00270005.JPG" alt="Hyde Park, London" loading="lazy" />
           <div class="film-overlay">
-            <span class="film-tag">Documentary</span>
-            <span class="film-name">The Weight of Waiting</span>
+            <div class="film-overlay-left">
+              <span class="film-tag">Street · Colour</span>
+              <span class="film-name">Hyde Park, London</span>
+            </div>
+            <div class="film-overlay-right">
+              <span class="film-stock">Kodak Ektar 100</span>
+              <span class="film-year">2025</span>
+            </div>
           </div>
         </div>
-        <div class="film-list-row">
-          <span class="film-list-title">The Weight of Waiting</span>
-          <span class="film-list-meta">Documentary · 2024</span>
-        </div>
-      </div>
+      </a>
 
-      <div class="film-item">
+      <a class="film-item film-item--live" href="gallery-winter-pea.html">
         <div class="film-thumb">
-          <div class="film-bg"></div>
+          <img class="film-cover" src="WinterPEA/R1-03816-027A.jpg" alt="Winter at Exeter" loading="lazy" />
           <div class="film-overlay">
-            <span class="film-tag">Portrait Series</span>
-            <span class="film-name">Faces of Karachi</span>
+            <div class="film-overlay-left">
+              <span class="film-tag">Portrait · Friends</span>
+              <span class="film-name">Winter at Exeter</span>
+            </div>
+            <div class="film-overlay-right">
+              <span class="film-stock">Fujifilm 400</span>
+              <span class="film-year">2025</span>
+            </div>
           </div>
         </div>
-        <div class="film-list-row">
-          <span class="film-list-title">Faces of Karachi</span>
-          <span class="film-list-meta">Portrait · 2024</span>
-        </div>
-      </div>
+      </a>
 
-      <div class="film-item">
+      <a class="film-item film-item--live" href="gallery-pea-fall.html">
         <div class="film-thumb">
-          <div class="film-bg"></div>
+          <img class="film-cover" src="PEA Fall/R1-00674-0014.JPEG" alt="PEA Fall" loading="lazy" />
           <div class="film-overlay">
-            <span class="film-tag">Short Film</span>
-            <span class="film-name">Blue Hour</span>
+            <div class="film-overlay-left">
+              <span class="film-tag">People · Campus</span>
+              <span class="film-name">PEA Fall</span>
+            </div>
+            <div class="film-overlay-right">
+              <span class="film-stock">Fujifilm 400</span>
+              <span class="film-year">2025</span>
+            </div>
           </div>
         </div>
-        <div class="film-list-row">
-          <span class="film-list-title">Blue Hour</span>
-          <span class="film-list-meta">Short Film · 2023</span>
-        </div>
-      </div>
+      </a>
 
-      <div class="film-item">
+      <a class="film-item film-item--live" href="gallery-sf-marin.html">
         <div class="film-thumb">
-          <div class="film-bg"></div>
+          <img class="film-cover" src="SF Marin/R1-03816-005A.jpg" alt="SF & Marin" loading="lazy" />
           <div class="film-overlay">
-            <span class="film-tag">Landscape</span>
-            <span class="film-name">Salt &amp; Dust</span>
+            <div class="film-overlay-left">
+              <span class="film-tag">Landscape · City</span>
+              <span class="film-name">SF &amp; Marin</span>
+            </div>
+            <div class="film-overlay-right">
+              <span class="film-stock">Fujifilm 400</span>
+              <span class="film-year">2025</span>
+            </div>
           </div>
         </div>
-        <div class="film-list-row">
-          <span class="film-list-title">Salt &amp; Dust</span>
-          <span class="film-list-meta">Landscape · 2023</span>
-        </div>
-      </div>
+      </a>
 
-      <div class="film-item">
+      <a class="film-item film-item--live" href="gallery-yosemite.html">
         <div class="film-thumb">
-          <div class="film-bg"></div>
+          <img class="film-cover" src="Yosemite and Summer/R1-00673-024A.JPEG" alt="Yosemite & Summer" loading="lazy" />
           <div class="film-overlay">
-            <span class="film-tag">Editorial</span>
-            <span class="film-name">Grounded</span>
+            <div class="film-overlay-left">
+              <span class="film-tag">Landscape · Summer</span>
+              <span class="film-name">Yosemite &amp; Summer</span>
+            </div>
+            <div class="film-overlay-right">
+              <span class="film-stock">Portra 400</span>
+              <span class="film-year">2025</span>
+            </div>
           </div>
         </div>
-        <div class="film-list-row">
-          <span class="film-list-title">Grounded</span>
-          <span class="film-list-meta">Editorial · 2023</span>
-        </div>
-      </div>
+      </a>
 
-      <div class="film-item">
-        <div class="film-thumb">
-          <div class="film-bg"></div>
-          <div class="film-overlay">
-            <span class="film-tag">Documentary</span>
-            <span class="film-name">Morning Markets</span>
-          </div>
-        </div>
-        <div class="film-list-row">
-          <span class="film-list-title">Morning Markets</span>
-          <span class="film-list-meta">Documentary · 2022</span>
-        </div>
-      </div>
 
     </div>
   </section>
@@ -882,118 +949,47 @@
         Finding patterns<br />in the <em>noise</em>
       </h2>
       <p class="data-intro-text">
-        From statistical modeling to neural networks — I build tools that make complex data legible. Especially interested in where computation meets human behavior.
+        From statistical modeling to neural networks—I love building tools that make complex data legible. Especially interested in where computation meets human behavior and expression.
       </p>
     </div>
 
     <div class="data-grid reveal">
 
-      <!-- Featured wide card -->
-      <div class="data-card featured">
+      <!-- LoRa Radio -->
+      <a href="https://github.com/docemerald" target="_blank" rel="noopener" class="data-card featured">
         <div class="data-card-accent"></div>
-        <div class="data-card-tag">// Featured Project</div>
-        <div class="data-card-title">Urban Rhythm: Predicting City Mobility with Temporal Graph Networks</div>
+        <div class="data-card-tag">// Networking · Hardware</div>
+        <div class="data-card-title">LoRa Radio: A Zero-Infrastructure, Democratized Internet</div>
         <div class="data-card-desc">
-          Applied temporal graph neural networks to NYC taxi dataset (500M+ records) to model how human movement patterns shift across time. Achieved 18% improvement over LSTM baselines with interpretable attention weights.
+          End-to-end encrypted, decentralized WAN using LoRa32 radio boards and Raspberry Pi. Explores LoRa as a $200–300 alternative to ISP-controlled internet—suitable for off-grid comms, disaster response, and privacy-first networking.
         </div>
-        <div class="data-card-code"><span class="cm"># Core model architecture</span>
-<span class="kw">class</span> <span class="fn">TemporalGNN</span>(nn.Module):
-    <span class="kw">def</span> <span class="fn">__init__</span>(self, in_ch, hidden, heads=<span class="st">8</span>):
-        self.tgat = TemporalGraphAttn(in_ch, hidden, heads)
-        self.lstm = nn.LSTM(hidden, hidden, batch_first=<span class="kw">True</span>)
-
-    <span class="kw">def</span> <span class="fn">forward</span>(self, x, edge_idx, timestamps):
-        h = self.tgat(x, edge_idx, timestamps)
-        <span class="kw">return</span> self.lstm(h)[<span class="st">0</span>]</div>
         <div class="data-card-stack">
-          <span class="stack-chip">PyTorch</span>
-          <span class="stack-chip">PyG</span>
-          <span class="stack-chip">NumPy</span>
-          <span class="stack-chip">Pandas</span>
-          <span class="stack-chip">Plotly</span>
+          <span class="stack-chip">LoRa32</span>
+          <span class="stack-chip">Raspberry Pi</span>
+          <span class="stack-chip">C++</span>
+          <span class="stack-chip">Python</span>
         </div>
         <div class="data-card-footer">
           <span class="data-card-year">2024</span>
           <span class="data-card-arrow">↗</span>
         </div>
-      </div>
+      </a>
 
-      <!-- Regular card -->
+      <!-- Equity Research card -->
       <div class="data-card">
         <div class="data-card-accent"></div>
-        <div class="data-card-tag">// Computer Vision</div>
-        <div class="data-card-title">Cinematic Frame Classifier</div>
+        <div class="data-card-tag">// Research · Finance</div>
+        <div class="data-card-title">Equity Research — Merton Capital Partners</div>
         <div class="data-card-desc">
-          Fine-tuned a vision transformer to classify cinematographic shot types (close-up, wide, Dutch angle) with 94.2% accuracy. Built dataset of 12k labeled frames from Criterion films.
+          Collaborated on "The Affordable Housing Moonshot for the U.S." — conducted in-depth analysis of national and South Florida housing policy, affordability metrics, and investment landscape. Full-time analyst role.
         </div>
         <div class="data-card-stack">
-          <span class="stack-chip">PyTorch</span>
-          <span class="stack-chip">ViT</span>
-          <span class="stack-chip">OpenCV</span>
-          <span class="stack-chip">HuggingFace</span>
+          <span class="stack-chip">Housing Policy</span>
+          <span class="stack-chip">Equity Research</span>
+          <span class="stack-chip">Financial Analysis</span>
         </div>
         <div class="data-card-footer">
-          <span class="data-card-year">2024</span>
-          <span class="data-card-arrow">↗</span>
-        </div>
-      </div>
-
-      <!-- Regular card -->
-      <div class="data-card">
-        <div class="data-card-accent"></div>
-        <div class="data-card-tag">// NLP</div>
-        <div class="data-card-title">Screenplay Sentiment Arc Analysis</div>
-        <div class="data-card-desc">
-          Analyzed emotional arcs in 800 Hollywood screenplays using BERT embeddings. Identified 6 archetypal story shapes and correlated with box office performance.
-        </div>
-        <div class="data-card-stack">
-          <span class="stack-chip">Python</span>
-          <span class="stack-chip">BERT</span>
-          <span class="stack-chip">scikit-learn</span>
-          <span class="stack-chip">seaborn</span>
-        </div>
-        <div class="data-card-footer">
-          <span class="data-card-year">2023</span>
-          <span class="data-card-arrow">↗</span>
-        </div>
-      </div>
-
-      <!-- Regular card -->
-      <div class="data-card">
-        <div class="data-card-accent"></div>
-        <div class="data-card-tag">// Statistics</div>
-        <div class="data-card-title">Bayesian Exposure Optimizer</div>
-        <div class="data-card-desc">
-          Built a Bayesian optimizer for camera exposure settings in dynamic lighting — models uncertainty in highlight recovery across sensor types using MCMC sampling.
-        </div>
-        <div class="data-card-stack">
-          <span class="stack-chip">PyMC</span>
-          <span class="stack-chip">NumPy</span>
-          <span class="stack-chip">Matplotlib</span>
-          <span class="stack-chip">SciPy</span>
-        </div>
-        <div class="data-card-footer">
-          <span class="data-card-year">2023</span>
-          <span class="data-card-arrow">↗</span>
-        </div>
-      </div>
-
-      <!-- Regular card -->
-      <div class="data-card">
-        <div class="data-card-accent"></div>
-        <div class="data-card-tag">// Data Viz</div>
-        <div class="data-card-title">The Golden Hour Atlas</div>
-        <div class="data-card-desc">
-          Interactive globe visualization mapping golden hour windows for 5,000 cities worldwide, with topographic shadow modeling and weather probability overlays.
-        </div>
-        <div class="data-card-stack">
-          <span class="stack-chip">D3.js</span>
-          <span class="stack-chip">Three.js</span>
-          <span class="stack-chip">Python</span>
-          <span class="stack-chip">FastAPI</span>
-        </div>
-        <div class="data-card-footer">
-          <span class="data-card-year">2022</span>
+          <span class="data-card-year">Jun–Sep 2025</span>
           <span class="data-card-arrow">↗</span>
         </div>
       </div>
@@ -1056,46 +1052,32 @@
         <span class="blog-card-date">2025–26</span>
       </a>
 
-      <a href="#" class="blog-card">
-        <span class="blog-card-tag gold">Photography</span>
-        <span class="blog-card-title">On Shooting in Silence — What Removing Sound Taught Me About Light</span>
-        <span class="blog-card-excerpt">Spending a month shooting without looking at the footage changed everything about how I see.</span>
-        <span class="blog-card-date">Mar 2026</span>
+      <a href="article-searching-american-dream.html" class="blog-card">
+        <span class="blog-card-tag gold">Essay · The Exonian</span>
+        <span class="blog-card-title">Searching for the American Dream</span>
+        <span class="blog-card-excerpt">A trip to the DMV becomes a meditation on civic duty, national identity, and what the American Dream actually means to a generation that's stopped believing in it.</span>
+        <span class="blog-card-date">2026</span>
       </a>
 
-      <a href="#" class="blog-card">
-        <span class="blog-card-tag cyan">Data Science</span>
-        <span class="blog-card-title">Why Every Photographer Should Learn Bayesian Statistics</span>
-        <span class="blog-card-excerpt">Uncertainty quantification has more in common with exposure judgment than you might think.</span>
-        <span class="blog-card-date">Feb 2026</span>
+      <a href="article-men-dont-cry.html" class="blog-card">
+        <span class="blog-card-tag gold">Personal Essay</span>
+        <span class="blog-card-title">Men Don't Cry</span>
+        <span class="blog-card-excerpt">On stoicism, grief, and the silent training that taught me to never show emotion — and why I've started to question it.</span>
+        <span class="blog-card-date">2025</span>
       </a>
 
-      <a href="#" class="blog-card">
-        <span class="blog-card-tag gold">Film</span>
-        <span class="blog-card-title">Pakistan Through a Lens: Notes from Three Weeks on the Road</span>
-        <span class="blog-card-excerpt">Lahore to Hunza — what a camera forces you to notice that you'd otherwise miss.</span>
-        <span class="blog-card-date">Oct 2025</span>
+      <a href="article-free-cookies.html" class="blog-card">
+        <span class="blog-card-tag gold">Personal Essay</span>
+        <span class="blog-card-title">Free Cookies</span>
+        <span class="blog-card-excerpt">My grandfather haggled for free cookies everytime he went to Safeway. I used to be embarrassed by it whenever he dragged me along. Now I understand.</span>
+        <span class="blog-card-date">2024</span>
       </a>
 
-      <a href="#" class="blog-card">
-        <span class="blog-card-tag cyan">Machine Learning</span>
-        <span class="blog-card-title">Training a Model to See Like a Cinematographer</span>
-        <span class="blog-card-excerpt">What happens when you fine-tune a vision model on Kubrick, Tarkovsky, and Wong Kar-wai.</span>
-        <span class="blog-card-date">Aug 2025</span>
-      </a>
-
-      <a href="#" class="blog-card">
-        <span class="blog-card-tag gold">Philosophy</span>
-        <span class="blog-card-title">The Camera I Almost Gave Up, and Why I'm Glad I Didn't</span>
-        <span class="blog-card-excerpt">On creative burnout, perfectionism, and finding your way back through constraint.</span>
-        <span class="blog-card-date">Jun 2025</span>
-      </a>
-
-      <a href="#" class="blog-card">
-        <span class="blog-card-tag cyan">Data Viz</span>
-        <span class="blog-card-title">Mapping the World's Golden Hour — A Data Story</span>
-        <span class="blog-card-excerpt">How I built a global atlas of the best light on Earth using public weather and solar data.</span>
-        <span class="blog-card-date">May 2025</span>
+      <a href="article-before-sunrise.html" class="blog-card">
+        <span class="blog-card-tag gold">Creative Nonfiction · Berlin</span>
+        <span class="blog-card-title">Before Sunrise</span>
+        <span class="blog-card-excerpt">My last morning in Berlin—an hour before the airport, a city still asleep, and a reckoning with innocence I didn't know I was carrying.</span>
+        <span class="blog-card-date">2024</span>
       </a>
 
     </div>
@@ -1106,13 +1088,12 @@
     <h2 class="contact-heading reveal">
       Let's make<br /><em>something</em>
     </h2>
-    <a href="mailto:shay@shaykashif.com" class="contact-email reveal reveal-delay-1">shay@shaykashif.com</a>
+    <a href="mailto:shay@shaykas.com" class="contact-email reveal reveal-delay-1">shay@shaykas.com</a>
     <div class="contact-socials reveal reveal-delay-2">
-      <a href="#" class="social-link">Instagram</a>
-      <a href="#" class="social-link">Vimeo</a>
-      <a href="#" class="social-link">GitHub</a>
-      <a href="#" class="social-link">LinkedIn</a>
-      <a href="#" class="social-link">Letterboxd</a>
+      <a href="https://www.instagram.com/shaykashif" class="social-link" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://github.com/docemerald" class="social-link" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://www.linkedin.com/in/shayaan-kashif-586099286/" class="social-link" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://letterboxd.com/shaykas" class="social-link" target="_blank" rel="noopener">Letterboxd</a>
     </div>
   </section>
 
@@ -1120,7 +1101,7 @@
   <footer>
     <span class="footer-copy">© 2026 Shay Kashif. All rights reserved.</span>
     <div class="footer-right">
-      <span class="footer-tag">shaykashif.com</span>
+      <span class="footer-tag">shaykas.com</span>
     </div>
   </footer>
 
@@ -1249,6 +1230,50 @@
       });
     }, { threshold: 0.2 });
     document.querySelectorAll('#stack').forEach(s => barObs.observe(s));
+
+    // ── Headshot Strip ─────────────────────────────────────
+    (function () {
+      const strip = document.getElementById('headshotStrip');
+      if (!strip) return;
+      const cards = Array.from(strip.querySelectorAll('.headshot-card'));
+      // order[i] = card index at position i (0=active/left, 3=queued off-right)
+      // DOM: cards[0]=pos-3, cards[1]=pos-2, cards[2]=pos-1, cards[3]=pos-0
+      let order = [3, 2, 1, 0];
+      let locked = false; // prevent double-fire during transition
+
+      function cycle() {
+        if (locked) return;
+        locked = true;
+
+        const fIdx = order[0];
+        const front = cards[fIdx];
+
+        // Slide active card out to the left
+        front.classList.remove('pos-0');
+        front.classList.add('exit');
+
+        // Shift remaining three forward simultaneously
+        cards[order[1]].className = 'headshot-card pos-0';
+        cards[order[2]].className = 'headshot-card pos-1';
+        cards[order[3]].className = 'headshot-card pos-2';
+
+        // After transition, silently place exited card at the right queue
+        setTimeout(() => {
+          front.style.transition = 'none';
+          front.className = 'headshot-card pos-3';
+          void front.offsetWidth;
+          requestAnimationFrame(() => { front.style.transition = ''; });
+          order.push(order.shift());
+          locked = false;
+        }, 720);
+      }
+
+      // Click to cycle
+      strip.addEventListener('click', cycle);
+
+      // Auto-cycle every 5 s
+      setInterval(cycle, 5000);
+    })();
   </script>
 </body>
 </html>

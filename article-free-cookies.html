@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free Cookies — Shay Kashif</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --black: #090909; --grey-900: #111111; --grey-800: #1a1a1a;
+      --grey-700: #222222; --grey-600: #333333; --grey-400: #666666;
+      --grey-200: #999999; --grey-100: #cccccc; --white: #f2f2f2;
+      --gold: #e8d5a8; --cyan: #7ed4e6;
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-sans: 'Inter', system-ui, sans-serif;
+      --ease: cubic-bezier(0.76,0,0.24,1);
+      --pad: clamp(24px, 6vw, 96px);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+    body { background: var(--black); color: var(--white); font-family: var(--font-sans); font-weight: 300; line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+    ::selection { background: var(--gold); color: var(--black); }
+    a { color: inherit; text-decoration: none; }
+
+    #grain {
+      position: fixed; inset: -50%; width: 200%; height: 200%;
+      pointer-events: none; z-index: 9000; opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      animation: grain 0.5s steps(1) infinite;
+    }
+    @keyframes grain {
+      0%,100%{transform:translate(0,0)} 10%{transform:translate(-2%,-3%)} 20%{transform:translate(3%,2%)}
+      30%{transform:translate(-1%,4%)} 40%{transform:translate(4%,-1%)} 50%{transform:translate(-3%,3%)}
+      60%{transform:translate(2%,-4%)} 70%{transform:translate(-4%,1%)} 80%{transform:translate(1%,-2%)} 90%{transform:translate(-2%,4%)}
+    }
+
+    nav {
+      position: sticky; top: 0; z-index: 500;
+      padding: 18px var(--pad);
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(9,9,9,0.88); backdrop-filter: blur(20px) saturate(1.4);
+      -webkit-backdrop-filter: blur(20px) saturate(1.4);
+      border-bottom: 1px solid var(--grey-800);
+    }
+    .nav-back { display: inline-flex; align-items: center; gap: 9px; font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: var(--grey-400); transition: color .25s; }
+    .nav-back:hover { color: var(--white); }
+    .nav-site { font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: var(--grey-600); }
+
+    .article-meta {
+      max-width: 780px; margin: 0 auto;
+      padding: clamp(56px, 9vh, 100px) var(--pad) 0;
+    }
+    .article-pub {
+      font-size: 11px; letter-spacing: .22em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 20px;
+    }
+    .article-title {
+      font-family: var(--font-serif);
+      font-size: clamp(40px, 7vw, 88px);
+      font-weight: 400; line-height: .93; letter-spacing: -.025em;
+      margin-bottom: 36px;
+    }
+    .article-byline {
+      font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--grey-400); padding-top: 20px;
+      border-top: 1px solid var(--grey-800);
+    }
+
+    .article-body {
+      max-width: 680px; margin: 0 auto;
+      padding: 56px var(--pad) clamp(80px, 14vh, 140px);
+    }
+    .article-body p {
+      font-size: 18px; line-height: 1.82;
+      color: var(--grey-200); margin-bottom: 28px;
+      font-weight: 300;
+    }
+    .article-body em { font-style: italic; }
+    .article-body strong { font-weight: 500; color: var(--white); }
+    .article-epigraph {
+      font-style: italic; color: var(--grey-400);
+      border-left: 2px solid var(--grey-700);
+      padding: 4px 0 4px 20px; margin: 36px 0;
+      font-size: 16px; line-height: 1.7;
+    }
+
+    @media (max-width: 600px) {
+      .article-body p { font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="grain"></div>
+
+  <nav>
+    <a href="index.html" class="nav-back">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Back
+    </a>
+    <span class="nav-site">shaykas.com</span>
+  </nav>
+
+  <div class="article-meta">
+    <p class="article-pub">Personal Essay</p>
+    <h1 class="article-title">Free Cookies</h1>
+    <p class="article-byline">Shay Kashif</p>
+  </div>
+
+  <article class="article-body">
+    <p>Sinking my head into the endless aisle of baked goods, I tried to escape the embarrassment of my grandpa. <em>I didn't know the old man haggling for free cookies for his grandkids at a supermarket bakery</em>, I told myself, <em>and it was perfectly plausible for a 10-year-old to be shopping for bread alone on a Tuesday evening.</em> It seemed that every time I went out with grandpa — or Nana, as I called him — he managed to mortify me in one way or another.</p>
+
+    <p>I always thought that Nana must be a strange sight for the typical shopper. On top of his white <em>shalwar kameez</em>, he wore a knitted cardigan that looked like it was straight out of a 1980s sitcom. When combined with his gold-rimmed aviators and Nike sneakers, Nana's outfits were always a hodge-podge. Whenever he was visiting, Nana insisted on taking me with him on his outings. I'd have rather spent my summer evenings playing on the Xbox, but I didn't have the heart to say no.</p>
+
+    <p>No matter how hot it was, Nana would walk everywhere — a task that could be downright Herculean in suburban America. And he would always wear that same hodge-podge outfit, sometimes with a 49ers baseball cap. Nana didn't even know what the 49ers were, much less American football — he'd simply "borrowed" the cap from my uncle, who barely used it anyway.</p>
+
+    <p>I was often awkward when walking alongside Nana. Like most kids, I wanted to fit in, and Nana tended to be counterproductive when it came to fitting in with Americans. I had to routinely remind him that in America, we don't eat one of the supermarket bananas to see if the bunch is ripe, we don't pick oranges from people's trees, and we most certainly do not haggle for free cookies at the bakery sections of grocery stores. Yet, with a bag of cookies in his hand and a grin on his face, Nana would always triumphantly proclaim, "But I'm an American, and I do these things!" He wasn't wrong — he'd been naturalized at 76 years old. As proud as he was to be Pakistani, Nana was equally as proud to be an American. He was always curious to learn more about a country that he hadn't even stepped foot in until he was in his late fifties, and his fascination with the United States concerned everything from the patriotic celebration of the 4th of July to the mundane interstate highways that connect the country. Most importantly, however, Nana was fascinated by just how diverse America was.</p>
+
+    <p>He'd often strike up conversations with strangers, introducing himself and always making sure to mention his Pakistani heritage. "Did you know Pakistan is also a nuclear power?" he would add, blissfully unaware of the political implications behind the question. To him, it was simply a way to find common ground with the Americans he admired. For most of my life, I'd equivocated as to my heritage, hoping not to bring attention to it. Especially in light of the Global War on Terror, I was reluctant to mention that I was of Pakistani Muslim background. I didn't want people getting the wrong idea — I was just as American as they were. On the other hand, Nana was extremely confident in his identity. At times, I thought he was a little too confident, even. What struck me, however, was how it always seemed to work out in his favor. Maybe Nana was just charismatic, as I always joked, but every interaction always ended with the other person smiling, no matter how perplexed they were.</p>
+
+    <p>For most of my childhood, I didn't really acknowledge my background outside of the house. I'd picked up Urdu from my parents when I was very young, and so that's what I spoke at home most of the time. Urdu is also why I was so special to Nana — I was the only grandchild who spoke his native language, so he took me everywhere. Outside of the house, however, I avoided speaking Urdu. Even on the phone with my parents, I chose to use English in an American accent. I didn't feel ashamed, per se, I just didn't want to be the object of attention. I saw myself as an American, and so I often distanced myself from my Pakistani background when around other "Americans". Outside of the two Muslim holy days of Eid, I never wore my <em>shalwar kameez</em> either. So, when I first saw Nana wearing it every day, I wondered why he just didn't wear a T-shirt. That's what Americans did, after all, and he was certainly proud to be an American.</p>
+
+    <p>Nana passed away in the first week of my freshman year of high school. High school was already a daunting experience for me — in a school of over a thousand, I didn't know a single person. At first, the loss of my grandfather only added on to my misery. I found myself thinking a lot about Nana, his life, and his experiences. I realized that, faced with a new country halfway across the world, Nana had confronted the experience head-on. Despite his age, he courageously went out every day, struck up conversations with strangers, and even came to call this new place home. Moreover, he had done so without sacrificing who he was. Nana hadn't concealed his Pakistani heritage, but rather he had displayed it for the world to see. He wore that <em>shalwar kameez</em> because he didn't have to give up who he was to be an American. He existed simultaneously both as an American and a Pakistani. If Nana could find his place in an entirely new country, I could definitely find my place in a new school. With that realization, I pushed myself out of my comfort zone. More importantly, this time I didn't hide who I was. I let puzzled friends ask me which language I was speaking on the phone, I brought Pakistani food to potlucks, and I began exploring what it meant to be both Pakistani and American. Just like how Nana's interactions always ended with smiles, mine always went positively, too.</p>
+
+    <p>When I think of my Nana, I think of his slicked back gray hair, his large veinous hands, and his husky phlegm-clearing coughs. I think of him watching ARY News on max volume, browsing the Karachi Stock Exchange, and reading the Quran with his tasbih in hand. I think of him crunching the kettle-cooked chips my mom tried to hide from him, and I think of him practically yelling in Urdu on the phone. Yet I also think of the white <em>shalwar kameez</em> and the gold aviators, and how his hodge-podge attire reflected the blending of East and West in his identity. I think of the courageous, confident man who, even at 76, was determined as ever to learn about the world around him and leave his comfort zone, even if that meant working his way through some cultural clashing. I think of him triumphantly holding that bag of free cookies, declaring that he was an American.</p>
+  </article>
+</body>
+</html>

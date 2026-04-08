@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Searching for the American Dream — Shay Kashif</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --black: #090909; --grey-900: #111111; --grey-800: #1a1a1a;
+      --grey-700: #222222; --grey-600: #333333; --grey-400: #666666;
+      --grey-200: #999999; --grey-100: #cccccc; --white: #f2f2f2;
+      --gold: #e8d5a8; --cyan: #7ed4e6;
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-sans: 'Inter', system-ui, sans-serif;
+      --ease: cubic-bezier(0.76,0,0.24,1);
+      --pad: clamp(24px, 6vw, 96px);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+    body { background: var(--black); color: var(--white); font-family: var(--font-sans); font-weight: 300; line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+    ::selection { background: var(--gold); color: var(--black); }
+    a { color: inherit; text-decoration: none; }
+    #grain {
+      position: fixed; inset: -50%; width: 200%; height: 200%;
+      pointer-events: none; z-index: 9000; opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      animation: grain 0.5s steps(1) infinite;
+    }
+    @keyframes grain {
+      0%,100%{transform:translate(0,0)} 10%{transform:translate(-2%,-3%)} 20%{transform:translate(3%,2%)}
+      30%{transform:translate(-1%,4%)} 40%{transform:translate(4%,-1%)} 50%{transform:translate(-3%,3%)}
+      60%{transform:translate(2%,-4%)} 70%{transform:translate(-4%,1%)} 80%{transform:translate(1%,-2%)} 90%{transform:translate(-2%,4%)}
+    }
+    nav {
+      position: sticky; top: 0; z-index: 500; padding: 18px var(--pad);
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(9,9,9,0.88); backdrop-filter: blur(20px) saturate(1.4);
+      -webkit-backdrop-filter: blur(20px) saturate(1.4); border-bottom: 1px solid var(--grey-800);
+    }
+    .nav-back { display: inline-flex; align-items: center; gap: 9px; font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: var(--grey-400); transition: color .25s; }
+    .nav-back:hover { color: var(--white); }
+    .nav-site { font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: var(--grey-600); }
+
+    /* Hero image */
+    .article-hero {
+      width: 100%; max-width: 780px; margin: 0 auto;
+      padding: clamp(40px, 7vh, 72px) var(--pad) 0;
+    }
+    .article-hero img {
+      width: 100%; height: clamp(240px, 40vw, 480px);
+      object-fit: cover; object-position: center 30%;
+      display: block; filter: grayscale(20%) contrast(1.05);
+    }
+
+    .article-meta { max-width: 780px; margin: 0 auto; padding: 36px var(--pad) 0; }
+    .article-pub { font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: var(--gold); margin-bottom: 20px; }
+    .article-title { font-family: var(--font-serif); font-size: clamp(36px, 6vw, 80px); font-weight: 400; line-height: .93; letter-spacing: -.025em; margin-bottom: 36px; }
+    .article-byline { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--grey-400); padding-top: 20px; border-top: 1px solid var(--grey-800); }
+
+    .article-body { max-width: 680px; margin: 0 auto; padding: 56px var(--pad) clamp(80px, 14vh, 140px); }
+    .article-body p { font-size: 18px; line-height: 1.82; color: var(--grey-200); margin-bottom: 28px; font-weight: 300; }
+    .article-body em { font-style: italic; }
+    .article-body strong { font-weight: 500; color: var(--white); }
+    .article-epigraph {
+      font-style: italic; color: var(--grey-400); border-left: 2px solid var(--grey-700);
+      padding: 4px 0 4px 20px; margin: 8px 0 40px; font-size: 16px; line-height: 1.7;
+    }
+    @media (max-width: 600px) { .article-body p { font-size: 16px; } }
+  </style>
+</head>
+<body>
+  <div id="grain"></div>
+  <nav>
+    <a href="index.html" class="nav-back">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Back
+    </a>
+    <span class="nav-site">shaykas.com</span>
+  </nav>
+
+  <div class="article-hero">
+    <img src="american-dream.jpg" alt="Searching for the American Dream" />
+  </div>
+
+  <div class="article-meta">
+    <p class="article-pub">Essay · The Exonian</p>
+    <h1 class="article-title">Searching for the American Dream</h1>
+    <p class="article-byline">Shay Kashif</p>
+  </div>
+
+  <article class="article-body">
+    <p>Last summer, I found myself forced into the one place that invokes existential dread in every American — the DMV. Like any other teenager, I was eager to get my driver's license, already imagining the ocean of possibilities being able to drive would open up for me, and so I had to make the obligatory trip. As you probably know, though, Lady Luck (who runs the DMV) is a fickle mistress, and you usually have to be prepared to give up your entire day before you finally get your turn. On this particularly sweltering summer's day, I, and countless other Americans from across Contra Costa County, had made the trip to the Concord, California DMV for some driving-related business. Now, it goes without saying that absolutely no one on the face of this Earth wants to spend their Saturday in a Department of Motor Vehicles office — especially one with a broken A/C — in the dry, suffocating summer heat of California. But, ticked off and standoffish as we may be, as signatories of the social contract, we all wait our turns patiently. That day, though, one man made the ignorant mistake of cutting the line at the front service desk. Within seconds, the man who he had cut in front of — short, on the older end, and with a thick accent — lashed out at him. "I don't care if you're Elon Musk, King Charles, or Ronald Reagan," he ranted at the bewildered queue-jumper while shaking his fist, "This is America, and in America, <em>everyone</em> waits in line."</p>
+
+    <p>I think we all have an image of what we <em>like</em> to believe America is. In a perfect world, America is the "land of opportunity" where, with enough hard work, we can all achieve our wildest dreams, regardless of where we come from. It's the place where all men — yes, even Elon Musk, King Charles, and Ronald Reagan — are created and considered equal. It's the land of plenty, where you and I can buy anything and everything our hearts desire. And it's the protector and leader of the Free World — beating back tyrants, genocidal regimes, and standing up for the oppressed and the downtrodden. Put short, in the immortalized words of Francis Scott Key, it's the "land of the free and the home of the brave".</p>
+
+    <p>I think I can speak for us all, however, when I say that it's become almost impossible not to be skeptical of that "perfect" America we're taught about in elementary schools as we grow older and more educated. After all, this is the same America that, until 1965, barred entry to immigrants from most of the world through the discriminatory quota system, and, for those immigrants it did admit, practiced eugenics at Angels and Ellis Island in choosing who to let into our country. It's the same America that exploited cheap Chinese, Mexican, and Irish immigrant labor, along with the elephant in the room — the mass enslavement and segregation of African-Americans. It's the same America that, today, suffers from colossal wealth inequality that allows billionaires and corporations to pay their way out of regulations, a housing crisis that threatens the very middle-class itself, and a predatory healthcare system where people would rather self-medicate than call an ambulance. It's the same America that, to this day, wages unjust, illegal, profit-driven wars across the world under the pretense of "liberation".</p>
+
+    <p>In a way, the DMV is much like the disjointed, nuanced, and unappealing "reality" of America. It's the embodiment of the bloated, outdated, and slow bureaucracy that, often arbitrarily, enforces unnecessarily complex, convoluted policies that only make everybody's involved life harder, at the behest of an almost certainly geriatric lawmaker in the capital who insists things were better back in the olden days. What's more, the fact that we all put up with the incoherence of the DMV itself is representative of the follies of American suburbia — we have a total, unequivocal reliance on automobiles. Automobiles that are slowly destroying our planet, but are absolutely essential to our livelihoods due to an abysmal lack of public transport services. The car, not the Star Spangled Banner, is the symbol of freedom in America — as shown by the impatience every kid, including myself, has about learning how to drive.</p>
+
+    <p>Indeed, with all the problems our country has, it's increasingly hard to be buoyantly patriotic for it. Hell, how are we supposed to even <em>make sense of</em>, let alone be <em>proud of</em>, a society that seems to be tearing itself apart day after day? That question absorbs me. I am, like millions of other Americans, a victim of the epidemic of a lack of national purpose and guidance due to the shattering of confidence in our public institutions. The American Dream, if you ask most people in my generation, no longer exists. Well, if it ever <em>did</em> exist in the first place.</p>
+
+    <p>So then, is America a country in decay? The optimist in me relents. We are a country that, despite our many problems, still does pretty good. We have functional infrastructure, almost universal basic amenities access, and are still the global leader in technological innovation. Most importantly, however, we have a strong democracy resistant to deposition that guarantees that all citizens are heard. What separates America from the rest of the world is fundamentally, our Constitution has always placed faith in <em>the power of the people</em>, no matter how much we may actually stray from those principles in reality. As Joe Pesci (of all people) says in the 1994 movie <em>With Honors</em> (a quintessential example of 90s optimism that also features Exeter alum Gore Vidal):</p>
+
+    <p class="article-epigraph">Our 'founding parents' were pompous, middle-aged, white farmers, but they were also great men. Because they knew one thing that all great men should know: that they didn't know everything. They knew they were gonna make mistakes, but they made sure to leave a way to correct them … They wanted a government of citizens, not royalty. A government of listeners, not lecturers. A government that could change, not stand still. The president isn't an 'elected king,' no matter how many bombs he can drop. Because the 'crude' Constitution doesn't trust him. He's a servant of the people. He's a bum, okay, Mr. Pitkannan? He's just a bum. And the only bliss that he's searching for is freedom and justice.</p>
+
+    <p>Now, as ridiculous as the movie can be, that line always strikes me, because to me, it represents what's really the "American Dream". Not a McMansion, not a cushy middle-management job, and not even a Chevy Suburban, but the relentless tradition of activism and change that has driven us as a country to confront our problems time and time again. Fittingly, Monday was Martin Luther King Day, and I couldn't help but be inspired by our lasting national commitment to honoring the legacy of the fight against racial injustice and inequality. If those activists — Americans, just like us — could, from Selma, to Montgomery, to Bakersfield, take the beating of the status quo and of the government, time and time again, and <em>still</em> believe that they could overcome (and overcome they did), <strong>we can too.</strong></p>
+
+    <p>Later in the evening of that same MLK day, a friend told me, "Shay, it's best not to stir the pot. Looking at it rationally, forbearance is the best policy. It's not worth hurting your own career to speak out against what you perceive as an injustice."</p>
+
+    <p>I'll tell you what I told him — frankly, I think that's ridiculous. Forbearance is not, never has been, and never will be, the same thing as inaction. As a country, we've become obsessed with the rat-race. Our principles are quickly becoming a thing of the past, as we give them up out of fear of losing our status and prestige — whether it be polling numbers, donor funding, or even getting into college. But as Americans, it's our moral and national duty to speak out against injustices happening in our communities and across the world, even if it means pushback from the system. And sure, I'll admit, that's way easier said than done. But time and time again, we've seen that only through large-scale bottom-up mobilization can we actually make our voices heard and our impact meaningful. It may not be easy, but it's what's necessary.</p>
+
+    <p>To tell the truth, that summer's day, I may have outwardly laughed at the old man ranting at the DMV, but something about what he said struck me. For the first time in years, I was filled with a deep sense of national pride and dignity — he was the might of the American citizen in the flesh, preaching proudly to a crowd of disgruntled Californians waiting for their number to be called at a decrepit DMV station about what truly made our country great. And while his proclamations of equality may, in reality, not be entirely true, there was nothing more real than his commitment to them. Because in America, we <em>all</em> need to stand in line and exercise our civic duty to democracy — not just at the DMV service desk, but in the polling stations, the picket lines, the courtrooms, and the debate halls.</p>
+  </article>
+</body>
+</html>

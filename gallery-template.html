@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gallery — Shay Kashif</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Variables ── */
+    :root {
+      --black:     #090909;
+      --grey-900:  #111111;
+      --grey-800:  #1a1a1a;
+      --grey-700:  #222222;
+      --grey-600:  #333333;
+      --grey-400:  #666666;
+      --grey-200:  #999999;
+      --grey-100:  #cccccc;
+      --white:     #f2f2f2;
+      --gold:      #e8d5a8;
+      --cyan:      #7ed4e6;
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-sans:  'Inter', system-ui, sans-serif;
+      --ease:      cubic-bezier(0.76, 0, 0.24, 1);
+      --pad:       clamp(24px, 5vw, 80px);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+    body {
+      background: var(--black); color: var(--white);
+      font-family: var(--font-sans); font-weight: 300;
+      line-height: 1.6; -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    ::selection { background: var(--gold); color: var(--black); }
+    a { color: inherit; text-decoration: none; }
+
+    /* ── Grain ── */
+    #grain {
+      position: fixed; inset: -50%; width: 200%; height: 200%;
+      pointer-events: none; z-index: 9000; opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      animation: grain 0.5s steps(1) infinite;
+    }
+    @keyframes grain {
+      0%,100%{transform:translate(0,0)} 10%{transform:translate(-2%,-3%)}
+      20%{transform:translate(3%,2%)} 30%{transform:translate(-1%,4%)}
+      40%{transform:translate(4%,-1%)} 50%{transform:translate(-3%,3%)}
+      60%{transform:translate(2%,-4%)} 70%{transform:translate(-4%,1%)}
+      80%{transform:translate(1%,-2%)} 90%{transform:translate(-2%,4%)}
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky; top: 0; z-index: 500;
+      padding: 18px var(--pad);
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(9,9,9,0.88);
+      backdrop-filter: blur(20px) saturate(1.4);
+      -webkit-backdrop-filter: blur(20px) saturate(1.4);
+      border-bottom: 1px solid var(--grey-800);
+    }
+    .nav-back {
+      display: inline-flex; align-items: center; gap: 9px;
+      font-size: 11px; letter-spacing: .15em; text-transform: uppercase;
+      color: var(--grey-400); transition: color .25s;
+    }
+    .nav-back:hover { color: var(--white); }
+    .nav-back svg { flex-shrink: 0; }
+    .nav-site { font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: var(--grey-600); }
+
+    /* ── Gallery hero ── */
+    .gallery-hero {
+      padding: clamp(48px, 8vh, 88px) var(--pad) clamp(40px, 6vh, 64px);
+      border-bottom: 1px solid var(--grey-800);
+      max-width: 1200px;
+    }
+    .gallery-tag {
+      font-size: 11px; letter-spacing: .22em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 22px;
+    }
+    .gallery-title {
+      font-family: var(--font-serif);
+      font-size: clamp(42px, 7.5vw, 96px);
+      font-weight: 400; line-height: .93; letter-spacing: -.025em;
+      margin-bottom: 36px;
+    }
+    .gallery-title em { font-style: italic; color: var(--gold); }
+    .gallery-meta {
+      display: flex; flex-wrap: wrap; align-items: center;
+      gap: 0; border-top: 1px solid var(--grey-800); padding-top: 20px;
+      margin-bottom: 28px;
+    }
+    .gallery-meta-item {
+      font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--grey-400); padding: 0 20px 0 0; margin-right: 20px;
+      border-right: 1px solid var(--grey-800);
+    }
+    .gallery-meta-item:last-child { border-right: none; padding-right: 0; margin-right: 0; }
+    .gallery-desc {
+      font-size: 15px; line-height: 1.75; color: var(--grey-200);
+      max-width: 600px; margin-bottom: 20px;
+    }
+    .gallery-count {
+      font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--grey-600);
+    }
+
+    /* ── Photo grid (CSS columns = natural masonry) ── */
+    .gallery-grid-wrap { padding: 3px 3px clamp(60px, 10vh, 120px); }
+    .gallery-grid {
+      columns: 3 280px;
+      column-gap: 3px;
+    }
+    .gallery-photo {
+      break-inside: avoid; display: block;
+      margin-bottom: 3px; overflow: hidden;
+      cursor: zoom-in; position: relative;
+    }
+    .gallery-photo img {
+      width: 100%; display: block;
+      transition: filter .45s ease, transform .8s var(--ease);
+    }
+    .gallery-photo:hover img {
+      filter: brightness(0.75);
+      transform: scale(1.025);
+    }
+    .photo-caption {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 28px 14px 12px;
+      background: linear-gradient(to top, rgba(0,0,0,.72) 0%, transparent 100%);
+      font-size: 11px; letter-spacing: .06em; color: var(--grey-100);
+      opacity: 0; transition: opacity .3s ease; pointer-events: none;
+    }
+    .gallery-photo:hover .photo-caption { opacity: 1; }
+
+    /* ── Lightbox ── */
+    .lightbox {
+      position: fixed; inset: 0; z-index: 8000;
+      background: rgba(5,5,5,.97);
+      display: flex; flex-direction: column;
+      opacity: 0; pointer-events: none;
+      transition: opacity .3s ease;
+    }
+    .lightbox.open { opacity: 1; pointer-events: all; }
+
+    .lb-top {
+      display: flex; align-items: center; justify-content: flex-end;
+      padding: 16px 20px;
+      flex-shrink: 0;
+    }
+    .lb-close {
+      background: none; border: 1px solid var(--grey-700); color: var(--grey-400);
+      width: 36px; height: 36px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 18px; line-height: 1;
+      transition: color .2s, border-color .2s;
+    }
+    .lb-close:hover { color: var(--white); border-color: var(--grey-400); }
+
+    .lb-stage {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden; padding: 0 64px;
+    }
+    .lb-stage img {
+      max-width: 100%; max-height: calc(100vh - 140px);
+      object-fit: contain; display: block;
+      user-select: none; -webkit-user-drag: none;
+    }
+    .lb-arrow {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer;
+      color: rgba(242,242,242,.35); font-size: 36px; padding: 12px 18px;
+      transition: color .2s; line-height: 1; z-index: 1;
+    }
+    .lb-arrow:hover { color: var(--white); }
+    .lb-arrow.prev { left: 4px; }
+    .lb-arrow.next { right: 4px; }
+
+    .lb-footer {
+      flex-shrink: 0; padding: 14px var(--pad);
+      display: flex; align-items: center; justify-content: space-between;
+      border-top: 1px solid var(--grey-800);
+      min-height: 52px;
+    }
+    .lb-caption { font-size: 13px; color: var(--grey-200); font-weight: 300; }
+    .lb-counter { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--grey-600); }
+
+    /* ── Responsive ── */
+    @media (max-width: 860px) {
+      .gallery-grid { columns: 2 200px; }
+      .lb-stage { padding: 0 48px; }
+    }
+    @media (max-width: 520px) {
+      .gallery-grid { columns: 1; }
+      .gallery-meta-item { border-right: none; padding-right: 0; margin-right: 16px; }
+      .lb-stage { padding: 0 40px; }
+      .lb-arrow { font-size: 28px; padding: 8px 10px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="grain"></div>
+
+  <nav>
+    <a href="index.html" class="nav-back">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Back
+    </a>
+    <span class="nav-site">shaykas.com</span>
+  </nav>
+
+  <header class="gallery-hero">
+    <p class="gallery-tag"  id="g-tag"></p>
+    <h1 class="gallery-title" id="g-title"></h1>
+    <div class="gallery-meta"  id="g-meta"></div>
+    <p class="gallery-desc"  id="g-desc"></p>
+    <p class="gallery-count" id="g-count"></p>
+  </header>
+
+  <div class="gallery-grid-wrap">
+    <div class="gallery-grid" id="gallery-grid"></div>
+  </div>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox">
+    <div class="lb-top">
+      <button class="lb-close" id="lb-close" aria-label="Close">×</button>
+    </div>
+    <div class="lb-stage">
+      <button class="lb-arrow prev" id="lb-prev" aria-label="Previous">‹</button>
+      <img id="lb-img" src="" alt="" />
+      <button class="lb-arrow next" id="lb-next" aria-label="Next">›</button>
+    </div>
+    <div class="lb-footer">
+      <span class="lb-caption" id="lb-caption"></span>
+      <span class="lb-counter" id="lb-counter"></span>
+    </div>
+  </div>
+
+  <script>
+  /* ═══════════════════════════════════════════════════════════════
+     GALLERY CONFIG
+     ─────────────────────────────────────────────────────────────
+     To create a new gallery:
+       1. Copy this file and rename it  (e.g. gallery-japan-2026.html)
+       2. Edit only the GALLERY object below
+       3. Save — the page builds itself automatically
+
+     Fields:
+       title        Main heading (large serif)
+       titleItalic  Optional — appears on a new line, italic+gold
+       tag          Short genre / location label (uppercase)
+       film         Film stock used
+       camera       Camera body / format
+       location     Where it was shot
+       year         Year as string
+       description  One or two sentences about the shoot
+       images       Array of { src, caption } objects
+                    caption is optional — leave "" to omit
+  ═══════════════════════════════════════════════════════════════ */
+  const GALLERY = {
+    title:       "Gallery Title",
+    titleItalic: "Subtitle in Italic",   // set to "" to hide
+    tag:         "Genre · Location",
+    film:        "Film Stock",
+    camera:      "Camera",
+    location:    "City, Country",
+    year:        "2025",
+    description: "A sentence or two about the shoot — what you were after, the light, the mood.",
+    images: [
+      // { src: "FolderName/filename.JPG", caption: "Optional caption" },
+      // Add one object per photograph.
+      // Tip: captions appear on hover and in the lightbox footer.
+    ]
+  };
+  /* ═══════════════════════════════════════════════════════════════
+     END CONFIG — no edits needed below this line
+  ═══════════════════════════════════════════════════════════════ */
+
+  // ── Build header ───────────────────────────────────────────────
+  document.title = GALLERY.title + (GALLERY.titleItalic ? ' — ' + GALLERY.titleItalic : '') + ' — Shay Kashif';
+
+  document.getElementById('g-tag').textContent = GALLERY.tag;
+
+  const titleEl = document.getElementById('g-title');
+  if (GALLERY.titleItalic) {
+    titleEl.innerHTML = GALLERY.title + '<br><em>' + GALLERY.titleItalic + '</em>';
+  } else {
+    titleEl.textContent = GALLERY.title;
+  }
+
+  const metaItems = [GALLERY.film, GALLERY.camera, GALLERY.location, GALLERY.year].filter(Boolean);
+  document.getElementById('g-meta').innerHTML = metaItems
+    .map(m => `<span class="gallery-meta-item">${m}</span>`).join('');
+
+  document.getElementById('g-desc').textContent  = GALLERY.description;
+  document.getElementById('g-count').textContent = GALLERY.images.length + ' photographs';
+
+  // ── Build photo grid ───────────────────────────────────────────
+  const grid = document.getElementById('gallery-grid');
+  GALLERY.images.forEach((photo, i) => {
+    const div = document.createElement('div');
+    div.className = 'gallery-photo';
+
+    const img = document.createElement('img');
+    img.src = photo.src;
+    img.alt = photo.caption || '';
+    img.loading = i < 9 ? 'eager' : 'lazy';
+    div.appendChild(img);
+
+    if (photo.caption) {
+      const cap = document.createElement('div');
+      cap.className = 'photo-caption';
+      cap.textContent = photo.caption;
+      div.appendChild(cap);
+    }
+
+    div.addEventListener('click', () => openLightbox(i));
+    grid.appendChild(div);
+  });
+
+  // ── Lightbox ───────────────────────────────────────────────────
+  let idx = 0;
+  const lb      = document.getElementById('lightbox');
+  const lbImg   = document.getElementById('lb-img');
+  const lbCap   = document.getElementById('lb-caption');
+  const lbCount = document.getElementById('lb-counter');
+
+  function showFrame(i) {
+    idx = ((i % GALLERY.images.length) + GALLERY.images.length) % GALLERY.images.length;
+    const p = GALLERY.images[idx];
+    lbImg.src       = p.src;
+    lbImg.alt       = p.caption || '';
+    lbCap.textContent   = p.caption || '';
+    lbCount.textContent = (idx + 1) + ' / ' + GALLERY.images.length;
+  }
+
+  function openLightbox(i) {
+    showFrame(i);
+    lb.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox() {
+    lb.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('lb-close').addEventListener('click', closeLightbox);
+  document.getElementById('lb-prev').addEventListener('click', () => showFrame(idx - 1));
+  document.getElementById('lb-next').addEventListener('click', () => showFrame(idx + 1));
+  lb.addEventListener('click', e => { if (e.target === lb || e.target.classList.contains('lb-stage')) closeLightbox(); });
+
+  document.addEventListener('keydown', e => {
+    if (!lb.classList.contains('open')) return;
+    if (e.key === 'Escape')     closeLightbox();
+    if (e.key === 'ArrowLeft')  showFrame(idx - 1);
+    if (e.key === 'ArrowRight') showFrame(idx + 1);
+  });
+
+  // Touch swipe support for lightbox
+  let touchX = null;
+  lb.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; }, { passive: true });
+  lb.addEventListener('touchend',   e => {
+    if (touchX === null) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    if (Math.abs(dx) > 40) { dx < 0 ? showFrame(idx + 1) : showFrame(idx - 1); }
+    touchX = null;
+  }, { passive: true });
+  </script>
+</body>
+</html>
