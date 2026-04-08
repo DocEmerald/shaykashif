@@ -1156,23 +1156,18 @@
   </section>
 
   <!-- ── Newsletter ── -->
-  <iframe name="mj-hidden" style="display:none" aria-hidden="true"></iframe>
   <section id="newsletter">
     <p class="newsletter-label reveal">Newsletter</p>
     <h2 class="newsletter-heading reveal">Stay in the loop</h2>
     <p class="newsletter-sub reveal">Essays, photos, and new work — occasional, no spam.</p>
-    <form class="newsletter-form reveal"
-          action="https://1psrs.mjt.lu/wgt/1psrs/0ikv/form"
-          method="post"
-          target="mj-hidden"
-          onsubmit="handleNewsletterSubmit(event)">
-      <input type="hidden" name="c" value="4c2a174e" />
+    <form class="newsletter-form reveal" onsubmit="handleNewsletterSubmit(event)">
       <input class="newsletter-input" type="email" name="email"
              placeholder="your@email.com" required autocomplete="email" />
-      <button class="newsletter-btn" type="submit">Subscribe</button>
+      <button class="newsletter-btn" type="submit" id="newsletterBtn">Subscribe</button>
     </form>
     <p class="newsletter-note reveal">No spam. Unsubscribe any time.</p>
     <p class="newsletter-success" id="newsletterSuccess">You're in — thanks for subscribing.</p>
+    <p class="newsletter-error" id="newsletterError" style="display:none;font-size:12px;color:#e88;margin-top:14px;">Something went wrong — please try again.</p>
   </section>
 
   <!-- ── Footer ── -->
@@ -1354,15 +1349,32 @@
     })();
 
     // ── Newsletter form ────────────────────────────────────
-    function handleNewsletterSubmit(e) {
-      const form = e.target;
-      const iframe = document.querySelector('iframe[name="mj-hidden"]');
-      // Show success once MailJet's hidden iframe responds
-      iframe.addEventListener('load', function onLoad() {
-        iframe.removeEventListener('load', onLoad);
+    async function handleNewsletterSubmit(e) {
+      e.preventDefault();
+      const form   = e.target;
+      const btn    = document.getElementById('newsletterBtn');
+      const email  = form.querySelector('input[type="email"]').value;
+      const errEl  = document.getElementById('newsletterError');
+      const okEl   = document.getElementById('newsletterSuccess');
+
+      btn.textContent = 'Subscribing…';
+      btn.disabled = true;
+      errEl.style.display = 'none';
+
+      try {
+        const res = await fetch('/api/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
+        if (!res.ok) throw new Error();
         form.style.display = 'none';
-        document.getElementById('newsletterSuccess').style.display = 'block';
-      });
+        okEl.style.display = 'block';
+      } catch {
+        errEl.style.display = 'block';
+        btn.textContent = 'Subscribe';
+        btn.disabled = false;
+      }
     }
   </script>
 </body>
