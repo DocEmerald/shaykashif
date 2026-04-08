@@ -305,6 +305,12 @@
   document.getElementById('g-desc').textContent  = GALLERY.description;
   document.getElementById('g-count').textContent = GALLERY.images.length + ' photographs';
 
+  // ── Insert /web/ before the filename in a path ────────────────
+  function webSrc(src) {
+    const s = src.lastIndexOf('/');
+    return s >= 0 ? src.slice(0, s + 1) + 'web/' + src.slice(s + 1) : 'web/' + src;
+  }
+
   // ── Build photo grid ───────────────────────────────────────────
   const grid = document.getElementById('gallery-grid');
   GALLERY.images.forEach((photo, i) => {
@@ -312,7 +318,7 @@
     div.className = 'gallery-photo';
 
     const img = document.createElement('img');
-    img.src = photo.src;
+    img.src = webSrc(photo.src);
     img.alt = photo.caption || '';
     img.loading = i < 9 ? 'eager' : 'lazy';
     div.appendChild(img);
@@ -338,7 +344,7 @@
   function showFrame(i) {
     idx = ((i % GALLERY.images.length) + GALLERY.images.length) % GALLERY.images.length;
     const p = GALLERY.images[idx];
-    lbImg.src       = p.src;
+    lbImg.src       = webSrc(p.src);
     lbImg.alt       = p.caption || '';
     lbCap.textContent   = p.caption || '';
     lbCount.textContent = (idx + 1) + ' / ' + GALLERY.images.length;
@@ -377,4 +383,4 @@
     touchX = null;
   }, { passive: true });
   </script>
-</
+<

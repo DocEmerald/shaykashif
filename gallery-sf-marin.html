@@ -126,7 +126,7 @@ function openLightbox(i) { current = i; updateLightbox(); lightbox.classList.add
 function closeLightbox() { lightbox.classList.remove('open'); document.body.style.overflow = ''; }
 function updateLightbox() {
   const img = GALLERY.images[current];
-  lbImg.src = `${GALLERY.folder}/${img.src}`;
+  lbImg.src = `${GALLERY.folder}/web/${img.src}`;
   lbCaption.textContent = img.caption || '';
   lbCounter.textContent = `${current + 1} / ${GALLERY.images.length}`;
 }
