@@ -150,6 +150,7 @@
       font-family: var(--font-serif); font-size: 18px; font-weight: 400;
       color: var(--white); text-decoration: none; letter-spacing: .01em;
       transition: color .3s;
+      display: inline-flex; align-items: center; gap: 10px;
     }
     .nav-links { display: flex; gap: 36px; list-style: none; }
     .nav-links a {
@@ -651,6 +652,56 @@
     }
     .social-link:hover { color: var(--white); }
 
+    /* ── Newsletter ───────────────────────────────────────── */
+    #newsletter {
+      border-top: 1px solid var(--grey-800);
+      padding: clamp(64px, 10vh, 100px) clamp(24px, 8vw, 120px);
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center;
+    }
+    .newsletter-label {
+      font-size: 11px; letter-spacing: .22em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 20px;
+    }
+    .newsletter-heading {
+      font-family: var(--font-serif); font-size: clamp(28px, 4vw, 52px);
+      font-weight: 400; line-height: 1.1; letter-spacing: -.02em;
+      margin-bottom: 14px;
+    }
+    .newsletter-sub {
+      font-size: 14px; color: var(--grey-400); max-width: 420px;
+      line-height: 1.7; margin-bottom: 40px;
+    }
+    .newsletter-form {
+      display: flex; gap: 0; width: 100%; max-width: 440px;
+    }
+    .newsletter-input {
+      flex: 1; background: var(--grey-900); border: 1px solid var(--grey-700);
+      border-right: none; color: var(--white);
+      font-family: var(--font-sans); font-size: 13px; font-weight: 300;
+      padding: 14px 18px; outline: none;
+      transition: border-color .25s;
+    }
+    .newsletter-input::placeholder { color: var(--grey-600); }
+    .newsletter-input:focus { border-color: var(--grey-400); }
+    .newsletter-btn {
+      background: var(--white); color: var(--black);
+      border: 1px solid var(--white);
+      font-family: var(--font-sans); font-size: 11px;
+      font-weight: 500; letter-spacing: .14em; text-transform: uppercase;
+      padding: 14px 22px; cursor: pointer; white-space: nowrap;
+      transition: background .25s, color .25s;
+    }
+    .newsletter-btn:hover { background: var(--gold); border-color: var(--gold); color: var(--black); }
+    .newsletter-note {
+      font-size: 11px; color: var(--grey-600); margin-top: 16px;
+      letter-spacing: .04em;
+    }
+    .newsletter-success {
+      font-size: 13px; color: var(--gold); margin-top: 16px;
+      display: none;
+    }
+
     /* ── Marquee ──────────────────────────────────────────── */
     .marquee-wrap {
       overflow: hidden; padding: 18px 0;
@@ -718,12 +769,19 @@
 
   <!-- ── Nav ── -->
   <nav>
-    <a href="#" class="nav-logo">Shay Kashif</a>
+    <a href="#" class="nav-logo">
+      <svg width="18" height="18" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <circle cx="16" cy="16" r="13" stroke="currentColor" stroke-width="1.5"/>
+        <circle cx="16" cy="16" r="5.5" stroke="currentColor" stroke-width="1.5"/>
+      </svg>
+      Shay Kashif
+    </a>
     <ul class="nav-links">
       <li><a href="#about">About</a></li>
       <li><a href="#film">Film & Photo</a></li>
       <li><a href="#data">Data & Code</a></li>
       <li><a href="#blog">Writing</a></li>
+      <li><a href="#newsletter">Newsletter</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
     <button class="nav-theme-btn" id="themeToggle" aria-label="Toggle light/dark mode">
@@ -1097,6 +1155,26 @@
     </div>
   </section>
 
+  <!-- ── Newsletter ── -->
+  <iframe name="mj-hidden" style="display:none" aria-hidden="true"></iframe>
+  <section id="newsletter">
+    <p class="newsletter-label reveal">Newsletter</p>
+    <h2 class="newsletter-heading reveal">Stay in the loop</h2>
+    <p class="newsletter-sub reveal">Essays, photos, and new work — occasional, no spam.</p>
+    <form class="newsletter-form reveal"
+          action="https://1psrs.mjt.lu/wgt/1psrs/0ikv/form"
+          method="post"
+          target="mj-hidden"
+          onsubmit="handleNewsletterSubmit(event)">
+      <input type="hidden" name="c" value="4c2a174e" />
+      <input class="newsletter-input" type="email" name="email"
+             placeholder="your@email.com" required autocomplete="email" />
+      <button class="newsletter-btn" type="submit">Subscribe</button>
+    </form>
+    <p class="newsletter-note reveal">No spam. Unsubscribe any time.</p>
+    <p class="newsletter-success" id="newsletterSuccess">You're in — thanks for subscribing.</p>
+  </section>
+
   <!-- ── Footer ── -->
   <footer>
     <span class="footer-copy">© 2026 Shay Kashif. All rights reserved.</span>
@@ -1274,6 +1352,18 @@
       // Auto-cycle every 5 s
       setInterval(cycle, 5000);
     })();
+
+    // ── Newsletter form ────────────────────────────────────
+    function handleNewsletterSubmit(e) {
+      const form = e.target;
+      const iframe = document.querySelector('iframe[name="mj-hidden"]');
+      // Show success once MailJet's hidden iframe responds
+      iframe.addEventListener('load', function onLoad() {
+        iframe.removeEventListener('load', onLoad);
+        form.style.display = 'none';
+        document.getElementById('newsletterSuccess').style.display = 'block';
+      });
+    }
   </script>
 </body>
 </html>
