@@ -117,7 +117,7 @@ let current = 0;
 GALLERY.images.forEach((img, i) => {
   const cell = document.createElement('div');
   cell.className = 'photo-cell';
-  cell.innerHTML = `<img src="${GALLERY.folder}/${img.src}" alt="${img.caption}" loading="lazy" />${img.caption ? `<span class="photo-caption">${img.caption}</span>` : ''}`;
+  cell.innerHTML = `<img src="${GALLERY.folder}/web/${img.src}" alt="${img.caption}" loading="lazy" />${img.caption ? `<span class="photo-caption">${img.caption}</span>` : ''}`;
   cell.addEventListener('click', () => openLightbox(i));
   grid.appendChild(cell);
 });
