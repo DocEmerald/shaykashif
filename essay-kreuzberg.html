@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Golden Hour: Kreuzberg — Shay Kashif</title>
+  <meta name="description" content="A photo essay on roaming the summer streets of Kreuzberg, Berlin. Film, digital, and words by Shay Kashif." />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:  #090909;
+      --off:    #111111;
+      --gold:   #e8d5a8;
+      --dim:    #8a8070;
+      --white:  #f0ede8;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      overflow: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 36px;
+      background: linear-gradient(to bottom, rgba(9,9,9,0.9) 0%, transparent 100%);
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 15px;
+      color: var(--gold);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      opacity: 0.85;
+      transition: opacity 0.2s;
+    }
+    .nav-logo:hover { opacity: 1; }
+    .nav-back {
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--dim);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-back:hover { color: var(--gold); }
+
+    /* ── LAYOUT ── */
+    .stage {
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    /* ── PHOTO PANEL ── */
+    .photo-panel {
+      position: relative;
+      overflow: hidden;
+      background: #000;
+    }
+    .slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.7s ease;
+    }
+    .slide.active { opacity: 1; }
+    .slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    /* subtle grain overlay */
+    .photo-panel::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      opacity: 0.35;
+    }
+    .film-badge {
+      position: absolute;
+      bottom: 28px;
+      left: 28px;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(240,237,232,0.45);
+      pointer-events: none;
+      transition: opacity 0.5s;
+      z-index: 10;
+    }
+
+    /* ── TEXT PANEL ── */
+    .text-panel {
+      position: relative;
+      background: var(--off);
+      border-left: 1px solid rgba(232,213,168,0.07);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 0;
+      overflow: hidden;
+    }
+    .text-inner {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 80px 48px 40px;
+    }
+
+    .essay-label {
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-bottom: 32px;
+    }
+    .essay-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 400;
+      color: var(--gold);
+      line-height: 1.4;
+      margin-bottom: 40px;
+    }
+
+    .text-slides {
+      position: relative;
+      flex: 1;
+      display: flex;
+      align-items: center;
+    }
+    .text-slide {
+      position: absolute;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+      pointer-events: none;
+    }
+    .text-slide.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+      position: relative;
+    }
+    .text-slide p {
+      font-family: 'Playfair Display', serif;
+      font-size: 17px;
+      font-style: italic;
+      line-height: 1.85;
+      color: var(--white);
+      font-weight: 400;
+    }
+
+    /* ── CONTROLS ── */
+    .controls {
+      padding: 32px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid rgba(232,213,168,0.07);
+    }
+    .counter {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: var(--dim);
+    }
+    .counter span {
+      color: var(--gold);
+      font-variant-numeric: tabular-nums;
+    }
+    .nav-btns {
+      display: flex;
+      gap: 12px;
+    }
+    .nav-btn {
+      width: 40px;
+      height: 40px;
+      border: 1px solid rgba(232,213,168,0.2);
+      background: transparent;
+      color: var(--gold);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .nav-btn:hover {
+      background: rgba(232,213,168,0.08);
+      border-color: rgba(232,213,168,0.4);
+    }
+    .nav-btn svg { width: 16px; height: 16px; }
+
+    /* progress bar */
+    .progress-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 2px;
+      background: var(--gold);
+      transition: width 0.5s ease;
+      opacity: 0.5;
+    }
+
+    /* ── MOBILE ── */
+    @media (max-width: 800px) {
+      html, body { overflow: auto; }
+      .stage {
+        grid-template-columns: 1fr;
+        grid-template-rows: 60vh auto;
+        height: auto;
+        min-height: 100vh;
+      }
+      .photo-panel { height: 60vh; }
+      .text-panel { border-left: none; border-top: 1px solid rgba(232,213,168,0.07); }
+      .text-inner { padding: 48px 28px 24px; }
+      .controls { padding: 24px 28px; }
+      .essay-title { font-size: 18px; margin-bottom: 28px; }
+      .text-slide p { font-size: 15px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">
+    <svg width="18" height="18" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+      <circle cx="16" cy="16" r="13" stroke="currentColor" stroke-width="1.5"/>
+      <circle cx="16" cy="16" r="5.5" stroke="currentColor" stroke-width="1.5"/>
+    </svg>
+    Shay Kashif
+  </a>
+  <a href="index.html#writing" class="nav-back">← Writing</a>
+</nav>
+
+<div class="stage">
+
+  <!-- PHOTO PANEL -->
+  <div class="photo-panel" id="photoPanel">
+
+    <div class="slide active" data-film="Kodak Ultramax 400 · Praktica Nova B">
+      <img src="Kreuzberg/web/r002-002.jpg" alt="Kreuzberg street, Berlin" loading="eager" />
+    </div>
+    <div class="slide" data-film="Kodak Ultramax 400 · Praktica Nova B">
+      <img src="Kreuzberg/web/r002-003.jpg" alt="Kreuzberg, Berlin" loading="lazy" />
+    </div>
+    <div class="slide" data-film="Kodak Ultramax 400 · Praktica Nova B">
+      <img src="Kreuzberg/web/r002-004.jpg" alt="Bergmannstraße, Berlin" loading="lazy" />
+    </div>
+    <div class="slide" data-film="Kodak Ultramax 400 · Praktica Nova B">
+      <img src="Kreuzberg/web/r002-005.jpg" alt="Kreuzberg evening, Berlin" loading="lazy" />
+    </div>
+    <div class="slide" data-film="Kodak Ultramax 400 · Praktica Nova B">
+      <img src="Kreuzberg/web/r002-006.jpg" alt="Kreuzberg street life" loading="lazy" />
+    </div>
+    <div class="slide" data-film="EOS R8 · EF 70–200mm">
+      <img src="Kreuzberg/web/IMG_1104.jpg" alt="Kreuzberg, Berlin" loading="lazy" />
+    </div>
+    <div class="slide" data-film="Kodak Ultramax 400 · Praktica Nova B">
+      <img src="Kreuzberg/web/r002-007.jpg" alt="Kreuzberg, Berlin" loading="lazy" />
+    </div>
+    <div class="slide" data-film="iPhone X">
+      <img src="Kreuzberg/web/IMG_6518.jpg" alt="Kreuzberg, Berlin" loading="lazy" />
+    </div>
+    <div class="slide" data-film="Kodak Ultramax 400 · Praktica Nova B">
+      <img src="Kreuzberg/web/r002-008.jpg" alt="Kreuzberg neighbourhood" loading="lazy" />
+    </div>
+    <div class="slide" data-film="Kodak Ultramax 400 · Praktica Nova B">
+      <img src="Kreuzberg/web/r002-009.jpg" alt="Kreuzberg, Berlin" loading="lazy" />
+    </div>
+    <div class="slide" data-film="Kodak Ultramax 400 · Praktica Nova B">
+      <img src="Kreuzberg/web/r002-010.jpg" alt="Kreuzberg streets" loading="lazy" />
+    </div>
+    <div class="slide" data-film="Kodak Ultramax 400 · Praktica Nova B">
+      <img src="Kreuzberg/web/r002-011.jpg" alt="Kreuzberg, golden hour" loading="lazy" />
+    </div>
+
+    <div class="film-badge" id="filmBadge">Kodak Ultramax 400 · Praktica Nova B</div>
+  </div>
+
+  <!-- TEXT PANEL -->
+  <div class="text-panel">
+    <div class="text-inner">
+      <p class="essay-label">Photo Essay &nbsp;·&nbsp; Berlin, Summer 2025</p>
+      <h1 class="essay-title">Golden Hour: Roaming The Summer Streets of Kreuzberg</h1>
+
+      <div class="text-slides" id="textSlides">
+
+        <div class="text-slide active">
+          <p>In late June, when the sun is highest over the Tropic of Cancer, the city of Berlin seems to be perpetually bathed in sunlight. Nightfall is but a temporary solace of a couple hours — varying shades of deep blue drift through the heavens, and then, in a blink, the sun rises again.</p>
+        </div>
+
+        <div class="text-slide">
+          <p>Berliners end the day at 4&nbsp;P.M., leaving them with almost six hours of leisure until the sun sets around 9:30. On these warm midsummer evenings, the city slows down.</p>
+        </div>
+
+        <div class="text-slide">
+          <p>As I walk through the streets of Kreuzberg, a diverse Berlin neighborhood with a deep-rooted history of counterculture, the languid exuberance of the evening is palpable.</p>
+        </div>
+
+        <div class="text-slide">
+          <p>Bergmannstraße, the high street, has been turned into a pedestrian zone replete with cafes, restaurants, and boutiques. Blooming lindens line the street, rustling in the evening wind — soft, golden, and gentle rays of sunlight peek through their leaves. The fragrances of coffee, flowers, and tobacco hang low in the summer air.</p>
+        </div>
+
+        <div class="text-slide">
+          <p>By 8&nbsp;P.M., the street has been turned into a sea of &ldquo;XBergers&rdquo;, each with, as Michel de Certeau describes it, an innate knowledge of the streets &ldquo;as blind as that of lovers in each other's arms.&rdquo;</p>
+        </div>
+
+        <div class="text-slide">
+          <p>They converse in German, Turkish, English, and Arabic; they wear suits, hoodies, skinny jeans, and Yankees baseball caps; they sit at ramen spots, shawarma joints, hookah bars, and Indian restaurants — but they are all brought together by the shared familiarity of this common place.</p>
+        </div>
+
+        <div class="text-slide">
+          <p>From the moment we all step onto Bergmannstraße, the street seems to take on some of our character. Through our footsteps, we become, as de Certeau puts it, an &ldquo;innumerable collection of singularities&rdquo; that &ldquo;weave&rdquo; together and mould this street through the simple act of walking on it.</p>
+        </div>
+
+        <div class="text-slide">
+          <p>I pass the restaurant I ate at the other day, where old, moustached men now sit, passionately debating in German while sipping on tea. The waiter&rsquo;s eyes flash with recognition as he sees me, and, beaming, he calls out in Urdu, &ldquo;Coming again soon?&rdquo; with all the frankness of an old friend. Perhaps the next time I&rsquo;m in town, I respond.</p>
+        </div>
+
+        <div class="text-slide">
+          <p>In Berlin, I may be a foreigner, but in Kreuzberg, I am just an &ldquo;XBerger&rdquo;, free of any label. This self-styling and openness by the district&rsquo;s residents reflects their rejection of what George Simmel calls the &ldquo;prejudices and petty philistinism&rdquo; of small, closed circles.</p>
+        </div>
+
+        <div class="text-slide">
+          <p>Historically detached from the greater city by the Berlin Wall, lower class, and notorious for squatters, Kreuzberg was the perfect spot for urban development. Immigrant workers, marginalized in the rest of the city, quickly integrated into the neighborhood&rsquo;s counterculture as they settled permanently.</p>
+        </div>
+
+        <div class="text-slide">
+          <p>Over 30 years since the Wall came down, Kreuzberg still defies the artistic refinement and growth-oriented attitude of the &ldquo;new&rdquo;, manicured Berlin through its organicity — fiercely resisting the &ldquo;functionalist totalitarianism&rdquo; that threatens to consume its home.</p>
+        </div>
+
+        <div class="text-slide">
+          <p>From the LGBTQ community and punk movement to immigrants and squatters, Kreuzberg has always belonged to all, even when the rest of the city hasn&rsquo;t. A midsummer evening&rsquo;s walk in the district makes that plainly clear, subsuming all into a warm embrace of belonging.</p>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="counter">
+        <span id="currentSlide">01</span> / <span id="totalSlides">12</span>
+      </div>
+      <div class="nav-btns">
+        <button class="nav-btn" id="prevBtn" aria-label="Previous">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+            <polyline points="10,3 5,8 10,13"/>
+          </svg>
+        </button>
+        <button class="nav-btn" id="nextBtn" aria-label="Next">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+            <polyline points="6,3 11,8 6,13"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+</div>
+
+<script>
+  const photoSlides = document.querySelectorAll('.slide');
+  const textSlides  = document.querySelectorAll('.text-slide');
+  const filmBadge   = document.getElementById('filmBadge');
+  const currentEl   = document.getElementById('currentSlide');
+  const progressBar = document.getElementById('progressBar');
+  const total       = photoSlides.length;
+  let current = 0;
+
+  document.getElementById('totalSlides').textContent = String(total).padStart(2, '0');
+
+  function goTo(n) {
+    photoSlides[current].classList.remove('active');
+    textSlides[current].classList.remove('active');
+    current = (n + total) % total;
+    photoSlides[current].classList.add('active');
+    textSlides[current].classList.add('active');
+    filmBadge.textContent = photoSlides[current].dataset.film || '';
+    currentEl.textContent = String(current + 1).padStart(2, '0');
+    progressBar.style.width = ((current + 1) / total * 100) + '%';
+  }
+
+  document.getElementById('prevBtn').addEventListener('click', () => goTo(current - 1));
+  document.getElementById('nextBtn').addEventListener('click', () => goTo(current + 1));
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(current + 1);
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   goTo(current - 1);
+  });
+
+  // Touch swipe
+  let touchX = null;
+  document.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; });
+  document.addEventListener('touchend', e => {
+    if (touchX === null) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    if (Math.abs(dx) > 40) goTo(current + (dx < 0 ? 1 : -1));
+    touchX = null;
+  });
+
+  // Preload next image
+  function preload(n) {
+    const next = (n + 1) % total;
+    const img = photoSlides[next].querySelector('img');
+    if (img && !img.complete) { const p = new Image(); p.src = img.src; }
+  }
+
+  // Init progress bar
+  progressBar.style.width = (1 / total * 100) + '%';
+
+  // Preload first few
+  [1, 2].forEach(i => preload(i));
+  document.getElementById('nextBtn').addEventListener('click', () => preload(current + 1));
+</script>
+
+</body>
+</html>
