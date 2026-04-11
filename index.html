@@ -374,20 +374,22 @@
       gap: 3px;
     }
     .film-item { position: relative; overflow: hidden; cursor: none; }
-    .film-item:nth-child(1) { grid-column: span 7; }
-    .film-item:nth-child(2) { grid-column: span 5; }
+    .film-item:nth-child(1) { grid-column: span 12; }
+    .film-item:nth-child(2) { grid-column: span 7; }
     .film-item:nth-child(3) { grid-column: span 5; }
-    .film-item:nth-child(4) { grid-column: span 7; }
-    .film-item:nth-child(5) { grid-column: span 12; }
+    .film-item:nth-child(4) { grid-column: span 5; }
+    .film-item:nth-child(5) { grid-column: span 7; }
+    .film-item:nth-child(6) { grid-column: span 12; }
 
     .film-thumb {
       width: 100%; aspect-ratio: 16/10; position: relative; overflow: hidden;
     }
-    .film-item:nth-child(1) .film-thumb { aspect-ratio: 4/3; }
-    .film-item:nth-child(2) .film-thumb { aspect-ratio: 3/4; }
-    .film-item:nth-child(3) .film-thumb { aspect-ratio: 4/5; }
-    .film-item:nth-child(4) .film-thumb { aspect-ratio: 7/4; }
-    .film-item:nth-child(5) .film-thumb { aspect-ratio: 16/7; }
+    .film-item:nth-child(1) .film-thumb { aspect-ratio: 21/9; }
+    .film-item:nth-child(2) .film-thumb { aspect-ratio: 4/3; }
+    .film-item:nth-child(3) .film-thumb { aspect-ratio: 3/4; }
+    .film-item:nth-child(4) .film-thumb { aspect-ratio: 4/5; }
+    .film-item:nth-child(5) .film-thumb { aspect-ratio: 7/4; }
+    .film-item:nth-child(6) .film-thumb { aspect-ratio: 16/7; }
 
     .film-bg {
       position: absolute; inset: 0;
@@ -406,11 +408,12 @@
       transform: scale(1.06);
       filter: contrast(1.1) saturate(0.72) brightness(0.9);
     }
-    .film-item:nth-child(1) .film-bg { background: linear-gradient(160deg,#1a0f08 0%,#2d1a0a 50%,#0f0908 100%); }
-    .film-item:nth-child(2) .film-bg { background: linear-gradient(135deg,#090e1a 0%,#0d1520 100%); }
-    .film-item:nth-child(3) .film-bg { background: linear-gradient(160deg,#0f1a12 0%,#08120a 100%); }
-    .film-item:nth-child(4) .film-bg { background: linear-gradient(160deg,#1a1008 0%,#2a1800 50%,#100a04 100%); }
-    .film-item:nth-child(5) .film-bg { background: linear-gradient(135deg,#0f1208 0%,#1a1a0a 50%,#0a0f08 100%); }
+    .film-item:nth-child(1) .film-bg { background: linear-gradient(160deg,#12100a 0%,#1e1a10 50%,#0e0d08 100%); }
+    .film-item:nth-child(2) .film-bg { background: linear-gradient(160deg,#1a0f08 0%,#2d1a0a 50%,#0f0908 100%); }
+    .film-item:nth-child(3) .film-bg { background: linear-gradient(135deg,#090e1a 0%,#0d1520 100%); }
+    .film-item:nth-child(4) .film-bg { background: linear-gradient(160deg,#0f1a12 0%,#08120a 100%); }
+    .film-item:nth-child(5) .film-bg { background: linear-gradient(160deg,#1a1008 0%,#2a1800 50%,#100a04 100%); }
+    .film-item:nth-child(6) .film-bg { background: linear-gradient(135deg,#0f1208 0%,#1a1a0a 50%,#0a0f08 100%); }
 
     .film-bg::after {
       content: ''; position: absolute; inset: 0;
@@ -573,6 +576,7 @@
     /* ── Blog ─────────────────────────────────────────────── */
     #blog { border-top: 1px solid var(--grey-800); }
     .blog-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--grey-800); margin-top: 4px; }
+    .blog-card:not(.featured):last-child:nth-child(even) { grid-column: span 2; }
     .blog-card {
       background: var(--black); padding: 36px 32px;
       text-decoration: none; color: inherit;
@@ -914,6 +918,22 @@
   <section id="film">
     <p class="section-label gold reveal">Photography &amp; Film</p>
     <div class="film-grid reveal">
+
+      <a class="film-item film-item--live" href="essay-kreuzberg.html">
+        <div class="film-thumb">
+          <img class="film-cover" src="Kreuzberg/r002-002.jpg" alt="Golden Hour, Kreuzberg" loading="lazy" />
+          <div class="film-overlay">
+            <div class="film-overlay-left">
+              <span class="film-tag">Photo Essay · Berlin</span>
+              <span class="film-name">Golden Hour: Kreuzberg</span>
+            </div>
+            <div class="film-overlay-right">
+              <span class="film-stock">Kodak Ultramax 400</span>
+              <span class="film-year">2025</span>
+            </div>
+          </div>
+        </div>
+      </a>
 
       <a class="film-item film-item--live" href="gallery-hyde-park.html">
         <div class="film-thumb">
