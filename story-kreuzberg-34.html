@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1080" />
+  <title>Instagram Post 3:4 — Kreuzberg</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 1080px;
+      height: 1350px;
+      overflow: hidden;
+      background: #090909;
+    }
+
+    .card {
+      position: relative;
+      width: 1080px;
+      height: 1350px;
+      overflow: hidden;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('Kreuzberg/IMG_1104.jpg');
+      background-size: cover;
+      background-position: center 20%;
+      filter: contrast(1.05) saturate(0.72);
+    }
+
+    .gradient-top {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 420px;
+      background: linear-gradient(to bottom,
+        rgba(9,9,9,0.78) 0%,
+        rgba(9,9,9,0.2) 70%,
+        transparent 100%
+      );
+    }
+    .gradient-bottom {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 700px;
+      background: linear-gradient(to top,
+        rgba(9,9,9,0.97) 0%,
+        rgba(9,9,9,0.85) 35%,
+        rgba(9,9,9,0.4) 70%,
+        transparent 100%
+      );
+    }
+
+    .content {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 80px 80px;
+    }
+
+    /* Top */
+    .top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .new-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 16px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #e8d5a8;
+    }
+    .new-label::before {
+      content: '';
+      display: block;
+      width: 36px;
+      height: 1px;
+      background: #e8d5a8;
+      opacity: 0.6;
+    }
+    .logo-icon {
+      opacity: 0.6;
+    }
+
+    /* Bottom */
+    .bottom {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .essay-tag {
+      font-size: 14px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #7ed4e6;
+      margin-bottom: 28px;
+    }
+
+    .title-line1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-style: italic;
+      font-weight: 400;
+      color: rgba(240,237,232,0.5);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .title-line2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 96px;
+      font-weight: 700;
+      color: #f0ede8;
+      line-height: 0.92;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+    .title-line3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 76px;
+      font-style: italic;
+      font-weight: 400;
+      color: #e8d5a8;
+      line-height: 1;
+      letter-spacing: -0.01em;
+      margin-bottom: 48px;
+    }
+
+    .divider {
+      width: 48px;
+      height: 1px;
+      background: rgba(232,213,168,0.35);
+      margin-bottom: 40px;
+    }
+
+    .quote {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      font-style: italic;
+      color: rgba(240,237,232,0.6);
+      line-height: 1.75;
+      max-width: 780px;
+      margin-bottom: 56px;
+    }
+
+    .url-row {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    .url-icon {
+      width: 36px;
+      height: 36px;
+      border: 1px solid rgba(232,213,168,0.3);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .url-icon svg { width: 16px; height: 16px; }
+    .url-text {
+      font-size: 20px;
+      letter-spacing: 0.06em;
+      color: rgba(240,237,232,0.45);
+    }
+    .url-text strong {
+      color: #e8d5a8;
+      font-weight: 400;
+    }
+
+    .film-credit {
+      position: absolute;
+      bottom: 80px;
+      right: 80px;
+      text-align: right;
+    }
+    .film-credit p {
+      font-size: 13px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(240,237,232,0.25);
+      line-height: 1.9;
+    }
+  </style>
+</head>
+<body>
+<div class="card">
+
+  <div class="bg"></div>
+  <div class="gradient-top"></div>
+  <div class="gradient-bottom"></div>
+
+  <div class="content">
+
+    <div class="top">
+      <span class="new-label">New Photo Essay</span>
+      <svg class="logo-icon" width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="#e8d5a8" stroke-width="1.5">
+        <circle cx="16" cy="16" r="13"/>
+        <circle cx="16" cy="16" r="5.5"/>
+      </svg>
+    </div>
+
+    <div class="bottom">
+      <p class="essay-tag">Photo Essay &nbsp;·&nbsp; Berlin, Summer 2025</p>
+      <p class="title-line1">Golden Hour:</p>
+      <h1 class="title-line2">Roaming</h1>
+      <h2 class="title-line3">Kreuzberg</h2>
+      <div class="divider"></div>
+      <p class="quote">"In Kreuzberg, I am just an XBerger, free of any label."</p>
+      <div class="url-row">
+        <div class="url-icon">
+          <svg viewBox="0 0 32 32" fill="none" stroke="#e8d5a8" stroke-width="1.5">
+            <circle cx="16" cy="16" r="13"/>
+            <circle cx="16" cy="16" r="5.5"/>
+          </svg>
+        </div>
+        <span class="url-text"><strong>shaykas.com</strong>/essay-kreuzberg</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="film-credit">
+    <p>EOS R8 · EF 70–200mm</p>
+    <p>Kreuzberg, Berlin</p>
+  </div>
+
+</div>
+</body>
+</html>
