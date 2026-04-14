@@ -763,7 +763,32 @@
       .nav-links { display: none; }
       .film-grid { grid-template-columns: 1fr; }
     }
-  </style>
+  
+    /* ── Map preview card ── */
+    .data-card-map-preview {
+      padding: 0;
+      overflow: hidden;
+      position: relative;
+      cursor: none;
+      min-height: 340px;
+    }
+    .data-card-map-preview::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+    }
+    .map-preview-frame {
+      position: absolute;
+      top: 0; left: 0;
+      width: 1200px;
+      height: 1020px;
+      border: none;
+      pointer-events: none;
+      transform: scale(0.335);
+      transform-origin: top left;
+    }
+</style>
 </head>
 <body>
 
@@ -1032,6 +1057,41 @@
     </div>
 
     <div class="data-grid reveal">
+      <!-- Oakland Redlining Map -->
+      <a href="map-oakland-redlining.html" class="data-card featured">
+        <div class="data-card-accent"></div>
+        <div class="data-card-tag">// Data Visualization · Urban Studies</div>
+        <div class="data-card-title">Redlining's Lasting Effects — Interactive Oakland Map</div>
+        <div class="data-card-desc">
+          Interactive map tracing how 1930s HOLC redlining grades shaped today's social vulnerability, displacement risk, and racial composition across Oakland's census tracts. Includes real-time ACS data, highway overlay histories, and a full community data dashboard.
+        </div>
+        <div class="data-card-stack">
+          <span class="stack-chip">Leaflet.js</span>
+          <span class="stack-chip">GeoJSON</span>
+          <span class="stack-chip">ACS Census</span>
+          <span class="stack-chip">OpenStreetMap</span>
+        </div>
+        <div class="data-card-footer">
+          <span class="data-card-year">2025</span>
+          <span class="data-card-arrow">↗</span>
+        </div>
+      </a>
+
+
+      <!-- Oakland Map Preview -->
+      <a href="map-oakland-redlining.html" class="data-card data-card-map-preview" aria-label="Open Oakland Redlining Map" tabindex="-1">
+        <iframe
+          src="map-oakland-redlining.html"
+          class="map-preview-frame"
+          loading="lazy"
+          scrolling="no"
+          tabindex="-1"
+          aria-hidden="true"
+          title="Oakland map preview">
+        </iframe>
+      </a>
+
+
 
       <!-- LoRa Radio -->
       <a href="https://github.com/docemerald" target="_blank" rel="noopener" class="data-card featured">
@@ -1071,6 +1131,8 @@
           <span class="data-card-arrow">↗</span>
         </div>
       </div>
+
+
 
     </div>
   </section>

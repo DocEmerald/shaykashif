@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Oakland: Redlining's Lasting Effects</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
@@ -620,6 +621,47 @@ html.light .nbhd-table td { color: var(--white); }
 #app.tab-enter {
   animation: tab-in-left 0.3s cubic-bezier(0.16,1,0.3,1) both;
 }
+
+/* ── Back to index button ── */
+#back-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 20px;
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px 8px 11px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--dim);
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.18s;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.35);
+}
+#back-btn:hover {
+  color: var(--gold);
+  border-color: rgba(232,213,168,0.35);
+  background: var(--off);
+}
+#back-btn svg {
+  width: 11px; height: 11px;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
+  flex-shrink: 0;
+}
+html.light #back-btn {
+  box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+}
 </style>
 <script>
 /* Time-based dark/light — runs before first paint, targets <html> */
@@ -631,6 +673,11 @@ html.light .nbhd-table td { color: var(--white); }
 </head>
 <body>
 <div id="page-veil"></div>
+
+<a id="back-btn" href="index.html" title="Back to portfolio">
+  <svg viewBox="0 0 12 12"><polyline points="7,2 3,6 7,10"/><line x1="3" y1="6" x2="11" y2="6"/></svg>
+  Portfolio
+</a>
 
 <!-- HEADER -->
 <div id="header">
