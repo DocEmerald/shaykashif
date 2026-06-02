@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Belisa — A Merchant of Words</title>
+<meta name="description" content="Visit Belisa Crepusculario, a merchant of words. Ask for a verse, a love letter, a historical telling — each with its price. After fifty centavos, she gives you something to keep.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://shaykas.com/belisa.html">
+<meta property="og:title" content="Belisa — A Merchant of Words">
+<meta property="og:description" content="An interactive word merchant, inspired by Isabel Allende's Two Words. Ask for verses, love letters, chronicles. After fifty centavos, she gives you something to keep.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://shaykas.com/belisa.html">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=IM+Fell+English:ital@0;1&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #f3e9d8;
+  --paper:    #eadfc8;
+  --card:     #e4d5b8;
+  --aged:     #1c0802;
+  --gold:     #4a2208;
+  --gold-dim: rgba(60,28,6,0.62);
+  --dim:      rgba(28,10,2,0.68);
+  --rust:     #7a1e08;
+  --white:    #0e0401;
+  --border:   rgba(60,30,6,0.28);
+}
+
+html { font-size: 16px; }
+
+body {
+  background: var(--bg);
+  color: var(--aged);
+  font-family: 'Playfair Display', Georgia, serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Grain */
+body::before {
+  content:'';
+  position:fixed; inset:0; z-index:0; pointer-events:none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity: 0.055;
+}
+
+/* Vignette */
+body::after {
+  content:'';
+  position:fixed; inset:0; z-index:0; pointer-events:none;
+  background: radial-gradient(ellipse at center, transparent 35%, rgba(140,90,30,0.22) 100%);
+}
+
+/* Back link */
+#back {
+  position: fixed; top: 22px; left: 24px; z-index: 200;
+  font-family: 'Inter', sans-serif;
+  font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--dim); text-decoration: none;
+  display: flex; align-items: center; gap: 6px;
+  transition: color 0.2s;
+}
+#back:hover { color: var(--aged); }
+#back svg { width: 10px; height: 10px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+/* Counter */
+#counter {
+  position: fixed; bottom: 28px; right: 28px; z-index: 200;
+  text-align: right; pointer-events: none;
+}
+#counter-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 8px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--dim); display: block; margin-bottom: 4px;
+}
+#counter-amount {
+  font-family: 'IM Fell English', serif;
+  font-size: 2rem; color: var(--gold-dim);
+  display: block; line-height: 1;
+  transition: color 0.4s, transform 0.2s;
+}
+#counter-amount.pulse {
+  color: var(--gold);
+  transform: scale(1.1);
+}
+#counter-suffix {
+  font-family: 'IM Fell English', serif; font-style: italic;
+  font-size: 0.7rem; color: var(--dim);
+  display: block; margin-top: 2px;
+}
+
+/* Main layout */
+main {
+  position: relative; z-index: 1;
+  max-width: 780px; margin: 0 auto;
+  padding: 80px 32px 120px;
+}
+
+/* ── Intro ── */
+.intro {
+  text-align: center;
+  margin-bottom: 64px;
+}
+.intro-eyebrow {
+  font-family: 'Inter', sans-serif;
+  font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--dim); margin-bottom: 20px; display: block;
+}
+.intro-name {
+  font-family: 'IM Fell English', serif;
+  font-size: clamp(3rem, 8vw, 5.5rem);
+  color: var(--white);
+  line-height: 1.05;
+  margin-bottom: 24px;
+  letter-spacing: -0.01em;
+}
+.intro-name em {
+  font-style: italic; color: var(--gold);
+}
+.intro-epigraph {
+  font-family: 'IM Fell English', serif; font-style: italic;
+  font-size: 1rem; color: var(--dim);
+  max-width: 460px; margin: 0 auto 10px;
+  line-height: 1.7;
+}
+.intro-attr {
+  font-family: 'Inter', sans-serif;
+  font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: rgba(28,10,2,0.42);
+}
+
+/* Divider */
+.divider {
+  display: flex; align-items: center; gap: 16px;
+  margin: 40px 0; opacity: 0.45;
+}
+.divider::before, .divider::after {
+  content:''; flex: 1; height: 1px; background: var(--gold);
+}
+.divider span {
+  font-family: 'IM Fell English', serif; font-size: 1.1rem;
+  color: var(--gold);
+}
+
+/* ── Offerings grid ── */
+.offerings-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 8.5px; letter-spacing: 0.25em; text-transform: uppercase;
+  color: var(--dim); text-align: center; margin-bottom: 24px;
+}
+
+.offerings {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  margin-bottom: 40px;
+}
+
+.offering {
+  background: var(--card);
+  padding: 22px 18px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  position: relative;
+  overflow: hidden;
+  border: none; color: inherit; font: inherit;
+  text-align: left;
+}
+.offering::before {
+  content:'';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--gold), transparent);
+  opacity: 0; transition: opacity 0.2s;
+}
+.offering:hover { background: rgba(200,154,64,0.06); }
+.offering:hover::before, .offering.active::before { opacity: 1; }
+.offering.active {
+  background: rgba(200,154,64,0.1);
+}
+.offering-icon {
+  font-size: 1.1rem; margin-bottom: 10px; display: block;
+  color: var(--gold); opacity: 0.6;
+}
+.offering-name {
+  font-family: 'IM Fell English', serif;
+  font-size: 1rem; color: var(--white);
+  display: block; margin-bottom: 3px;
+}
+.offering-name-en {
+  font-family: 'Inter', sans-serif;
+  font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--dim); display: block; margin-bottom: 12px;
+}
+.offering-price {
+  font-family: 'IM Fell English', serif; font-style: italic;
+  font-size: 0.85rem; color: var(--gold);
+}
+
+/* ── Request form ── */
+#request-section {
+  background: var(--paper);
+  border: 1px solid var(--border);
+  padding: 32px 36px;
+  margin-bottom: 40px;
+  opacity: 0; transform: translateY(10px);
+  transition: opacity 0.35s, transform 0.35s;
+  pointer-events: none;
+}
+#request-section.visible {
+  opacity: 1; transform: translateY(0); pointer-events: all;
+}
+.request-prompt {
+  font-family: 'IM Fell English', serif; font-style: italic;
+  font-size: 1rem; color: var(--aged);
+  margin-bottom: 20px; line-height: 1.6;
+}
+.name-row {
+  display: flex; gap: 16px; align-items: flex-end;
+  flex-wrap: wrap;
+}
+.name-field {
+  flex: 1; min-width: 180px;
+}
+.name-field label {
+  font-family: 'Inter', sans-serif;
+  font-size: 8px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--dim); display: block; margin-bottom: 8px;
+}
+.name-field input {
+  width: 100%;
+  background: rgba(90,48,12,0.06);
+  border: none; border-bottom: 2px solid rgba(90,48,12,0.45);
+  color: var(--aged);
+  font-family: 'IM Fell English', serif; font-size: 1rem;
+  padding: 8px 6px; outline: none;
+  transition: border-color 0.2s, background 0.2s;
+  border-radius: 2px 2px 0 0;
+}
+.name-field input::placeholder { color: rgba(58,28,8,0.38); font-style: italic; }
+.name-field input:focus {
+  border-bottom-color: var(--gold);
+  background: rgba(90,48,12,0.1);
+}
+
+#compose-btn {
+  background: transparent;
+  border: 1px solid var(--gold-dim);
+  color: var(--gold);
+  font-family: 'IM Fell English', serif; font-style: italic;
+  font-size: 1rem;
+  padding: 10px 28px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+#compose-btn:hover {
+  background: rgba(200,154,64,0.08);
+  border-color: var(--gold);
+}
+#compose-btn:disabled {
+  opacity: 0.35; cursor: default;
+}
+
+/* ── Delivery ── */
+#delivery {
+  min-height: 200px;
+  display: none;
+}
+#delivery.visible { display: block; }
+
+.delivery-header {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 24px; padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.delivery-type {
+  font-family: 'Inter', sans-serif;
+  font-size: 8px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--dim);
+}
+.delivery-cost {
+  font-family: 'IM Fell English', serif; font-style: italic;
+  font-size: 0.85rem; color: var(--gold);
+}
+
+.delivery-text {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem; line-height: 1.9; color: var(--white);
+  white-space: pre-wrap;
+  min-height: 120px;
+}
+/* Block-by-block fade-in */
+@keyframes blockIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.text-block {
+  opacity: 0;
+  animation: blockIn 0.55s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+.text-spacer { height: 0.9em; }
+
+.ask-again {
+  margin-top: 28px; padding-top: 20px;
+  border-top: 1px solid var(--border);
+  display: flex; justify-content: flex-end;
+}
+.ask-again button {
+  background: transparent; border: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--dim); cursor: pointer;
+  transition: color 0.2s;
+}
+.ask-again button:hover { color: var(--aged); }
+
+/* ── Special word overlay ── */
+#word-overlay {
+  position: fixed; inset: 0; z-index: 500;
+  background: rgba(8,4,1,0.97);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.8s;
+}
+#word-overlay.show {
+  opacity: 1; pointer-events: all;
+}
+.word-ceremony {
+  text-align: center; max-width: 480px; padding: 32px;
+}
+.ceremony-eyebrow {
+  font-family: 'Inter', sans-serif;
+  font-size: 8px; letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--dim); margin-bottom: 48px; display: block;
+}
+.ceremony-whisper {
+  font-family: 'IM Fell English', serif; font-style: italic;
+  font-size: 1.05rem; color: var(--dim);
+  line-height: 1.8; margin-bottom: 56px;
+}
+.secret-words {
+  font-family: 'IM Fell English', serif;
+  font-size: clamp(2.2rem, 6vw, 3.8rem);
+  color: var(--gold); letter-spacing: 0.04em;
+  margin-bottom: 20px; line-height: 1.2;
+  opacity: 0; transition: opacity 1.4s 0.6s;
+}
+#word-overlay.show .secret-words { opacity: 1; }
+.secret-meaning {
+  font-family: 'IM Fell English', serif; font-style: italic;
+  font-size: 0.9rem; color: rgba(200,168,130,0.5);
+  margin-bottom: 52px; line-height: 1.6;
+  opacity: 0; transition: opacity 1s 1.8s;
+}
+#word-overlay.show .secret-meaning { opacity: 1; }
+.ceremony-keep {
+  font-family: 'Inter', sans-serif;
+  font-size: 8px; letter-spacing: 0.24em; text-transform: uppercase;
+  color: var(--dim);
+  opacity: 0; transition: opacity 0.8s 2.8s;
+  display: block; margin-bottom: 40px;
+}
+#word-overlay.show .ceremony-keep { opacity: 1; }
+.ceremony-close {
+  background: transparent; border: 1px solid var(--border);
+  color: var(--dim); font-family: 'Inter', sans-serif;
+  font-size: 8px; letter-spacing: 0.18em; text-transform: uppercase;
+  padding: 10px 24px; cursor: pointer;
+  transition: all 0.2s;
+  opacity: 0; transition: opacity 0.8s 3.4s, color 0.2s, border-color 0.2s;
+}
+#word-overlay.show .ceremony-close { opacity: 1; }
+
+/* On dark overlay, dim text needs to be light */
+#word-overlay .ceremony-whisper { color: rgba(200,168,130,0.65); }
+#word-overlay .ceremony-eyebrow { color: rgba(200,168,130,0.45); }
+#word-overlay .ceremony-keep    { color: rgba(200,168,130,0.55); }
+#word-overlay .ceremony-close   { color: rgba(200,168,130,0.5); border-color: rgba(200,168,130,0.2); }
+#word-overlay .ceremony-close:hover { color: rgba(220,190,150,0.9); border-color: rgba(200,168,130,0.4); }
+.ceremony-close:hover { color: var(--aged); border-color: var(--gold-dim); }
+
+@media (max-width: 600px) {
+  .offerings { grid-template-columns: repeat(2, 1fr); }
+  main { padding: 64px 20px 100px; }
+  #request-section { padding: 24px 20px; }
+  .name-row { flex-direction: column; }
+  #compose-btn { width: 100%; text-align: center; }
+}
+
+/* Attribution / citation line */
+.delivery-attr {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: 0.78rem;
+  color: var(--dim);
+  letter-spacing: 0.02em;
+}
+</style>
+</head>
+<body>
+
+<a id="back" href="index.html">
+  <svg viewBox="0 0 12 12"><polyline points="7,2 3,6 7,10"/><line x1="3" y1="6" x2="11" y2="6"/></svg>
+  Portfolio
+</a>
+
+<div id="counter">
+  <span id="counter-label">La cuenta</span>
+  <span id="counter-amount">0</span>
+  <span id="counter-suffix">centavos</span>
+</div>
+
+<main>
+  <div class="intro">
+    <span class="intro-eyebrow">Isabel Allende &middot; Dos palabras</span>
+    <h1 class="intro-name"><em>Belisa</em></h1>
+    <p class="intro-epigraph">Recorría el país, desde las regiones más altas y frías hasta las costas calientes, instalándose en las ferias y en los mercados, donde montaba cuatro palos con un toldo de lienzo, bajo el cual se protegía del sol y de la lluvia para atender a su clientela. No necesitaba pregonar su mercadería, porque de tanto caminar por aquí y por allá, todos la conocían.</p>
+    <p class="intro-attr">— Isabel Allende, Dos Palabras</p>
+    <div class="divider"><span>&#10022;</span></div>
+    <p class="intro-epigraph" style="font-size:0.9rem; opacity:0.85;">Ella vende palabras. Haz tu petición. Por cincuenta centavos, te da algo para guardar.</p>
+  </div>
+
+  <p class="offerings-label">Sus ofrendas</p>
+
+  <div class="offerings">
+    <button class="offering" data-cat="verse" onclick="selectOffering(this)">
+      <span class="offering-icon">&#10022;</span>
+      <span class="offering-name">Verso</span>
+      <span class="offering-price">5 centavos</span>
+    </button>
+    <button class="offering" data-cat="dream" onclick="selectOffering(this)">
+      <span class="offering-icon">&#9789;</span>
+      <span class="offering-name">La Calidad de un Sueño</span>
+      <span class="offering-price">7 centavos</span>
+    </button>
+    <button class="offering" data-cat="letter" onclick="selectOffering(this)">
+      <span class="offering-icon">&#9829;</span>
+      <span class="offering-name">Cartas de Enamorados</span>
+      <span class="offering-price">9 centavos</span>
+    </button>
+    <button class="offering" data-cat="insult" onclick="selectOffering(this)">
+      <span class="offering-icon">#</span>
+      <span class="offering-name">Insultos por Enemigos Irreconciliables</span>
+      <span class="offering-price">12 centavos</span>
+    </button>
+    <button class="offering" data-cat="chronicle" onclick="selectOffering(this)">
+      <span class="offering-icon">&#9881;</span>
+      <span class="offering-name">Historia</span>
+      <span class="offering-price">10 centavos</span>
+    </button>
+    <button class="offering" data-cat="announcement" onclick="selectOffering(this)">
+      <span class="offering-icon">&#182;</span>
+      <span class="offering-name">Las Nuevas</span>
+      <span class="offering-price">5 centavos</span>
+    </button>
+  </div>
+
+  <div id="request-section">
+    <p class="request-prompt" id="request-prompt">Si quieres, di tu nombre..</p>
+    <div class="name-row">
+      <div class="name-field">
+        <label for="name-input" id="name-label">Para quién compondrá?</label>
+        <input type="text" id="name-input" placeholder="tu nombre, si lo deseas&hellip;" maxlength="40" autocomplete="off">
+      </div>
+      <button id="compose-btn" onclick="compose()">Compón</button>
+    </div>
+  </div>
+
+  <div id="delivery">
+    <div class="delivery-header">
+      <span class="delivery-type" id="delivery-type"></span>
+      <span class="delivery-cost" id="delivery-cost"></span>
+    </div>
+    <div class="delivery-text" id="delivery-text"></div>
+    <div class="ask-again">
+      <button onclick="askAgain()">Pide otra cosa &rarr;</button>
+    </div>
+  </div>
+</main>
+
+<div id="word-overlay">
+  <div class="word-ceremony">
+    <span class="ceremony-eyebrow">Cincuenta centavos</span>
+    <p class="ceremony-whisper">
+      Belisa hace una pausa. Te mira durante un largo momento. Se inclina y susurra dos palabras que te pertenecen solo a ti.
+    </p>
+    <div class="secret-words" id="secret-words"></div>
+    <p class="secret-meaning" id="secret-meaning"></p>
+    <span class="ceremony-keep">Guarda esto. No le digas a nadie.</span>
+    <button class="ceremony-close" onclick="closeOverlay()">Los llevaré</button>
+  </div>
+</div>
+
+<script>
+// ── Content library ──────────────────────────────────────────────
+const CONTENT = {
+  verse: {
+    price: 5,
+    label: 'Verso',
+    labelEn: 'A Verse',
+    prompts: [
+      '¿Para quién escribe ella esto?',
+    ],
+    pieces: [
+      {
+        text: `—Yo soy ardiente, yo soy morena,
+yo soy el símbolo de la pasión,
+de ansia de goces mi alma está llena.
+¿A mí me buscas? —No es a ti, no.
+
+—Mi frente es pálida, mis trenzas de oro:
+puedo brindarte dichas sin fin,
+yo de ternuras guardo un tesoro.
+¿A mí me llamas? —No, no es a ti.
+
+—Yo soy un sueño, un imposible,
+vano fantasma de niebla y luz;
+soy incorpórea, soy intangible:
+no puedo amarte. —¡Oh ven, ven tú!`,
+        attr: 'Gustavo Adolfo Bécquer · Rimas (1871)',
+      },
+    ],
+  },
+
+  chronicle: {
+    price: 10,
+    label: 'Historia',
+    labelEn: 'Historia',
+    prompts: [
+      'Belisa cuenta historias sin saltarse nada.',
+    ],
+    pieces: [
+      {
+        text: `EL ORO DE TOMÁS VARGAS
+
+Antes de que empezara la pelotera descomunal del progreso, quienes tenían algunos ahorros, los enterraban, era la única forma conocida de guardar dinero, pero más tarde la gente les tomó confianza a los bancos. Cuando hicieron la carretera y fue más fácil llegar en autobús a la ciudad, cambiaron sus monedas de oro y de plata por papeles pintados y los metieron en cajas fuertes, como si fueran tesoros. Tomás Vargas se burlaba de ellos a carcajadas, porque nunca creyó en ese sistema. El tiempo le dio la razón y cuando se acabó el gobierno del Benefactor —que duró como treinta años, según dicen— los billetes no valían nada y muchos terminaron pegados de adorno en las paredes, como infame recordatorio del candor de sus dueños. Mientras todos los demás escribían cartas al nuevo Presidente y a los periódicos para quejarse de la estafa colectiva de las nuevas monedas, Tomás Vargas tenía sus morocotas de oro en un entierro seguro, aunque eso no atenuó sus hábitos de avaro y de pordiosero.
+
+Era hombre sin decencia, pedía dinero prestado sin intención de devolverlo, y mantenía a los hijos con hambre y a la mujer en harapos, mientras él usaba sombreros de pelo de guama y fumaba cigarros de caballero. Ni siquiera pagaba la cuota de la escuela, sus seis hijos legítimos se educaron gratis porque la Maestra Inés decidió que mientras ella estuviera en su sano juicio y con fuerzas para trabajar, ningún niño del pueblo se quedaría sin saber leer. La edad no le quitó lo pendenciero, bebedor y mujeriego. Tenía a mucha honra ser el más macho de la región, como pregonaba en la plaza cada vez que la borrachera le hacía perder el entendimiento y anunciar a todo pulmón los nombres de las muchachas que había seducido y de los bastardos que llevaban su sangre. Si fueran a creerle, tuvo como trescientos porque en cada arrebato daba nombres diferentes. Los policías se lo llevaron varias veces y el Teniente en persona le propinó unos cuantos planazos en las nalgas, para ver si se le regeneraba el carácter, pero eso no dio más resultados que las amonestaciones del cura. En verdad sólo respetaba a Riad Halabí, el dueño del almacén, por eso los vecinos recurrían a él cuando sospechaban que se le había pasado la mano con la disipación y estaba zurrando a su mujer o a sus hijos. En esas ocasiones el árabe abandonaba el mostrador con tanta prisa que no se acordaba de cerrar la tienda, y se presentaba, sofocado de disgusto justiciero, a poner orden en el rancho de los Vargas. No tenía necesidad de decir mucho, al viejo le bastaba verlo aparecer para tranquilizarse. Riad Halabí era el único capaz de avergonzar a ese bellaco.
+
+Antonia Sierra, la mujer de Vargas, era veintiséis años menor que él. Al llegar a la cuarentena ya estaba muy gastada, casi no le quedaban dientes sanos en la boca y su aguerrido cuerpo de mulata se había deformado por el trabajo, los partos y los abortos; sin embargo aún conservaba la huella de su pasada arrogancia, una manera de caminar con la cabeza bien erguida y la cintura quebrada, un resabio de antigua belleza, un tremendo orgullo que paraba en seco cualquier intento de tenerle lástima. Apenas le alcanzaban las horas para cumplir su día, porque además de atender a sus hijos y ocuparse del huerto y las gallinas ganaba unos pesos cocinando el almuerzo de los policías, lavando ropa ajena y limpiando la escuela. A veces andaba con el cuerpo sembrado de magullones azules y aunque nadie preguntaba, toda Agua Santa sabía de las palizas propinadas por su marido. Sólo Riad Halabí y la Maestra Inés se atrevían a hacerle regalos discretos, buscando excusas para no ofenderla, algo de ropa, alimentos, cuadernos y vitaminas para sus niños. Muchas humillaciones tuvo que soportar Antonia Sierra de su marido, incluso que le impusiera una concubina en su propia casa.
+
+Concha Díaz llegó a Agua Santa a bordo de uno de los camiones de la Compañía de Petróleos, tan desconsolada y lamentable como un espectro. El chófer se compadeció al verla descalza en el camino, con su atado a la espalda y su barriga de mujer preñada. Al cruzar la aldea, los camiones se detenían en el almacén, por eso Riad Halabí fue el primero en enterarse del asunto. La vio aparecer en su puerta y por la forma en que dejó caer su bulto ante el mostrador se dio cuenta al punto de que no estaba de paso, esa muchacha venía a quedarse. Era muy joven, morena y de baja estatura, con una mata compacta de pelo crespo desteñido por el sol, donde parecía no haber entrado un peine en mucho tiempo. Como siempre hacía con los visitantes, Riad Halabí le ofreció a Concha una silla y un refresco de piña y se dispuso a escuchar el recuento de sus aventuras o sus desgracias, pero la muchacha hablaba poco, se limitaba a sonarse la nariz con los dedos, la vista clavada en el suelo, las lágrimas cayéndole sin apuro por las mejillas y una retahíla de reproches brotándole entre los dientes. Por fin el árabe logró entenderle que quería ver a Tomás Vargas y mandó a buscarlo a la taberna. Lo esperó en la puerta y apenas lo tuvo por delante lo cogió por un brazo y lo encaró con la forastera, sin darle tiempo de reponerse del susto.
+
+—La joven dice que el bebé es tuyo —dijo Riad Halabí con ese tono suave que usaba cuando estaba indignado.
+—Eso no se puede probar, turco. Siempre se sabe quién es la madre, pero del padre nunca hay seguridad —replicó el otro confundido, pero con ánimo suficiente para esbozar un guiño de picardía que nadie apreció.
+
+Esta vez la mujer se echó a llorar con entusiasmo, mascullando que no habría viajado de tan lejos si no supiera quién era el padre. Riad Halabí le dijo a Vargas que si no le daba vergüenza, tenía edad para ser abuelo de la muchacha, y si pensaba que otra vez el pueblo iba a sacar la cara por sus pecados estaba en un error, qué se había imaginado, pero cuando el llanto de la joven fue en aumento, agregó lo que todos sabían que diría.
+
+—Está bien, niña, cálmate. Puedes quedarte en mi casa por un tiempo, al menos hasta el nacimiento de la criatura.
+
+Concha Díaz comenzó a sollozar más fuerte y manifestó que no viviría en ninguna parte, sólo con Tomás Vargas, porque para eso había venido. El aire se detuvo en el almacén, se hizo un silencio muy largo, sólo se oían los ventiladores en el techo y el moquilleo de la mujer, sin que nadie se atreviera a decirle que el viejo era casado y tenía seis chiquillos. Por fin Vargas cogió el bulto de la viajera y la ayudó a ponerse de pie.
+
+—Muy bien, Conchita, si eso es lo que quieres, no hay más que hablar. Nos vamos para mi casa ahora mismo —dijo.
+
+Así fue como al volver de su trabajo Antonia Sierra encontró a otra mujer descansando en su hamaca y por primera vez el orgullo no le alcanzó para disimular sus sentimientos. Sus insultos rodaron por la calle principal y el eco llegó hasta la plaza y se metió en todas las casas, anunciando que Concha Díaz era una rata inmunda y que Antonia Sierra le haría la vida imposible hasta devolverla al arroyo de donde nunca debió salir, que si creía que sus hijos iban a vivir bajo el mismo techo con una rabipelada se llevaría una sorpresa, porque ella no era ninguna palurda, y a su marido más le valía andarse con cuidado, porque ella había aguantado mucho sufrimiento y mucha decepción, todo en nombre de sus hijos, pobres inocentes, pero ya estaba bueno, ahora todos iban a ver quién era Antonia Sierra.
+
+La rabieta le duró una semana, al cabo de la cual los gritos se tornaron en un continuo murmullo y perdió el último vestigio de su belleza, ya no le quedaba ni la manera de caminar, se arrastraba como una perra apaleada. Los vecinos intentaron explicarle que todo ese lío no era culpa de Concha, sino de Vargas, pero ella no estaba dispuesta a escuchar consejos de templanza o de justicia. La vida en el rancho de esa familia nunca había sido agradable, pero con la llegada de la concubina se convirtió en un tormento sin tregua. Antonia pasaba las noches acurrucada en la cama de sus hijos, escupiendo maldiciones, mientras al lado roncaba su marido abrazado a la muchacha. Apenas asomaba el sol Antonia debía levantarse, preparar el café y amasar las arepas, mandar a los chiquillos a la escuela, cuidar el huerto, cocinar para los policías, lavar y planchar. Se ocupaba de todas esas tareas como una autómata, mientras del alma le destilaba un rosario de amarguras. Como se negaba a darle comida a su marido, Concha se encargó de hacerlo cuando la otra salía, para no encontrarse con ella ante el fogón de la cocina. Era tanto el odio de Antonia Sierra, que algunos en el pueblo creyeron que acabaría matando a su rival y fueron a pedirle a Riad Halabí y a la Maestra Inés que intervinieran antes de que fuera tarde.
+
+Sin embargo, las cosas no sucedieron de esa manera. Al cabo de dos meses la barriga de Concha parecía una calabaza, se le habían hinchado tanto las piernas que estaban a punto de reventársele las venas, y lloraba continuamente porque se sentía sola y asustada. Tomás Vargas se cansó de tanta lágrima y decidió ir a su casa sólo a dormir. Ya no fue necesario que las mujeres hicieran turnos para cocinar, Concha perdió el último incentivo para vestirse y se quedó echada en la hamaca mirando el techo, sin ánimo ni para colarse un café. Antonia la ignoró todo el primer día, pero en la noche le mandó un plato de sopa y un vaso de leche caliente con uno de los niños, para que no dijeran que ella dejaba morirse a nadie de hambre bajo su techo. La rutina se repitió y a los pocos días Concha se levantó para comer con los demás. Antonia fingía no verla, pero al menos dejó de lanzar insultos al aire cada vez que la otra pasaba cerca. Poco a poco la derrotó la lástima. Cuando vio que la muchacha estaba cada día más delgada, un pobre espantapájaros con un vientre descomunal y unas ojeras profundas, empezó a matar sus gallinas una por una para darle caldo, y apenas se le acabaron las aves hizo lo que nunca había hecho hasta entonces, fue a pedirle ayuda a Riad Halabí.
+
+—Seis hijos he tenido y varios nacimientos malogrados, pero nunca he visto a nadie enfermarse tanto de preñez —explicó ruborizada—. Está en los huesos, turco, no alcanza a tragarse la comida y ya la está vomitando. No es que a mí me importe, no tengo nada que ver con eso, pero ¿qué le voy a decir a su madre si se me muere? No quiero que me vengan a pedir cuentas después.
+
+Riad Halabí llevó a la enferma en su camioneta al hospital y Antonia los acompañó. Volvieron con una bolsa de píldoras de diferentes colores y un vestido nuevo para Concha, porque el suyo ya no le bajaba de la cintura. La desgracia de la otra mujer forzó a Antonia Sierra a revivir retazos de su juventud, de su primer embarazo y de las mismas violencias que ella soportó. Deseaba, a pesar suyo, que el futuro de Concha Díaz no fuera tan funesto como el propio. Ya no le tenía rabia, sino una callada compasión, y empezó a tratarla como a una hija descarriada, con una autoridad brusca que apenas lograba ocultar su ternura. La joven estaba aterrada al ver las perniciosas transformaciones en su cuerpo, esa deformidad que aumentaba sin control, esa vergüenza de andarse orinando de a poco y de caminar como un ganso, esa repulsión incontrolable y esas ganas de morirse. Algunos días despertaba muy enferma y no podía salir de la cama, entonces Antonia turnaba a los niños para cuidarla mientras ella partía a cumplir con su trabajo a las carreras, para regresar temprano a atenderla; pero en otras ocasiones Concha amanecía más animosa y cuando Antonia volvía extenuada, se encontraba con la cena lista y la casa limpia. La muchacha le servía un café y se quedaba de pie a su lado, esperando que se lo bebiera, con una mirada líquida de animal agradecido.
+
+El niño nació en el hospital de la ciudad, porque no quiso venir al mundo y tuvieron que abrir a Concha Díaz para sacárselo. Antonia se quedó con ella ocho días, durante los cuales la Maestra Inés se ocupó de sus chiquillos. Las dos mujeres regresaron en la camioneta del almacén y todo Agua Santa salió a darles la bienvenida. La madre venía sonriendo, mientras Antonia exhibía al recién nacido con una algazara de abuela, anunciando que sería bautizado Riad Vargas Díaz, en justo homenaje al turco, porque sin su ayuda la madre no hubiera llegado a tiempo a la maternidad y además fue él quien se hizo cargo de los gastos cuando el padre hizo oídos sordos y se fingió más borracho que de costumbre para no desenterrar su oro.
+
+Antes de dos semanas Tomás Vargas quiso exigirle a Concha Díaz que volviera a su hamaca, a pesar de que la mujer todavía tenía un costurón fresco y un vendaje de guerra en el vientre, pero Antonia Sierra se le puso delante con los brazos en jarra, decidida por primera vez en su existencia a impedir que el viejo hiciera según su capricho. Su marido inició el ademán de quitarse el cinturón para darle los correazos habituales, pero ella no lo dejó terminar el gesto y se le fue encima con tal fiereza, que el hombre retrocedió, sorprendido. Esa vacilación lo perdió, porque ella supo entonces quién era el más fuerte. Entretanto Concha Díaz había dejado a su hijo en un rincón y enarbolaba una pesada vasija de barro, con el propósito evidente de reventársela en la cabeza. El hombre comprendió su desventaja y se fue del rancho lanzando blasfemias. Toda Agua Santa supo lo sucedido porque él mismo se lo contó a las muchachas del prostíbulo, quienes también dijeron que Vargas ya no funcionaba y que todos sus alardes de semental eran pura fanfarronería y ningún fundamento.
+
+A partir de ese incidente las cosas cambiaron. Concha Díaz se repuso con rapidez y mientras Antonia Sierra salía a trabajar, ella se quedaba a cargo de los niños y las tareas del huerto y de la casa. Tomás Vargas se tragó la desazón y regresó humildemente a su hamaca, donde no tuvo compañía. Aliviaba el despecho maltratando a sus hijos y comentando en la taberna que las mujeres, como las mulas, sólo entienden a palos, pero en la casa no volvió a intentar castigarlas. En las borracheras gritaba a los cuatro vientos las ventajas de la bigamia y el cura tuvo que dedicar varios domingos a rebatirlo desde el púlpito, para que no prendiera la idea y se le fueran al carajo tantos años de predicar la virtud cristiana de la monogamia.
+
+En Agua Santa se podía tolerar que un hombre maltratara a su familia, fuera haragán, bochinchero y no devolviera el dinero prestado, pero las deudas del juego eran sagradas. En las riñas de gallos los billetes se colocaban bien doblados entre los dedos, donde todos pudieran verlos, y en el dominó, los dados o las cartas, se ponían sobre la mesa a la izquierda del jugador. A veces los camioneros de la Compañía de Petróleos se detenían para unas vueltas de póquer y aunque ellos no mostraban su dinero, antes de irse pagaban hasta el último céntimo. Los sábados llegaban los guardias del Penal de Santa María a visitar el burdel y a jugar en la taberna su paga de la semana. Ni ellos —que eran mucho más bandidos que los presos a su cargo— se atrevían a jugar si no podían pagar. Nadie violaba esa regla.
+
+Tomás Vargas no apostaba, pero le gustaba mirar a los ganadores, podía pasar horas observando un dominó, era el primero en instalarse en las riñas de gallos y seguía los números de la lotería que anunciaban por la radio, aunque él nunca compraba uno. Estaba defendido de esa tentación por el tamaño de su avaricia. Sin embargo, cuando la férrea complicidad de Antonia Sierra y Concha Díaz le mermó definitivamente el ímpetu viril, se volcó hacia el juego. Al principio apostaba unas propinas míseras y sólo los borrachos más pobres aceptaban sentarse a la mesa con él, pero con los naipes tuvo más suerte que con sus mujeres y pronto le entró el comején del dinero fácil y empezó a descomponerse hasta el meollo mismo de su naturaleza mezquina. Con la esperanza de hacerse rico en un solo golpe de fortuna y recuperar de paso —mediante la ilusoria proyección de ese triunfo— su humillado prestigio de padrote, empezó a aumentar los riesgos. Pronto se medían con él los jugadores más bravos y los demás hacían rueda para seguir las alternativas de cada encuentro. Tomás Vargas no ponía los billetes estirados sobre la mesa, como era la tradición, pero pagaba cuando perdía. En su casa la pobreza se agudizó y Concha salió también a trabajar. Los niños quedaron solos y la Maestra Inés tuvo que alimentarlos para que no anduvieran por el pueblo aprendiendo a mendigar.
+
+Las cosas se complicaron para Tomás Vargas cuando aceptó el desafío del Teniente y después de seis horas de juego le ganó doscientos pesos. El oficial confiscó el sueldo de sus subalternos para pagar la derrota. Era un moreno bien plantado, con un bigote de morsa y la casaca siempre abierta para que las muchachas pudieran apreciar su torso velludo y su colección de cadenas de oro. Nadie lo estimaba en Agua Santa, porque era hombre de carácter impredecible y se atribuía la autoridad de inventar leyes según su capricho y conveniencia. Antes de su llegada, la cárcel era sólo un par de cuartos para pasar la noche después de alguna riña —nunca hubo crímenes de gravedad en Agua Santa y los únicos malhechores eran los presos en su tránsito hacia el Penal de Santa María— pero el Teniente se encargó de que nadie pasara por el retén sin llevarse una buena golpiza. Gracias a él la gente le tomó miedo a la ley. Estaba indignado por la pérdida de los doscientos pesos, pero entregó el dinero sin chistar y hasta con cierto desprendimiento elegante, porque ni él, con todo el peso de su poder, se hubiera levantado de la mesa sin pagar.
+
+Tomás Vargas pasó dos días alardeando de su triunfo, hasta que el Teniente le avisó que lo esperaba el sábado para la revancha. Esta vez la apuesta sería de mil pesos, le anunció con un tono tan perentorio que el otro se acordó de los planazos recibidos en el trasero y no se atrevió a negarse. La tarde del sábado la taberna estaba repleta de gente. En la apretura y el calor se acabó el aire y hubo que sacar la mesa a la calle para que todos pudieran ser testigos del juego. Nunca se había apostado tanto dinero en Agua Santa y para asegurar la limpieza del procedimiento designaron a Riad Halabí. Éste empezó por exigir que el público se mantuviera a dos pasos de distancia, para impedir cualquier trampa, y que el Teniente y los demás policías dejaran sus armas en el retén.
+
+—Antes de comenzar ambos jugadores deben poner su dinero sobre la mesa —dijo el árbitro.
+—Mi palabra basta, turco —replicó el Teniente.
+—En ese caso mi palabra basta también —agregó Tomás Vargas.
+—¿Cómo pagarán si pierden? —quiso saber Riad Halabí.
+—Tengo una casa en la capital, si pierdo Vargas tendrá los títulos mañana mismo.
+—Está bien. ¿Y tú?
+—Yo pago con el oro que tengo enterrado.
+
+El juego fue lo más emocionante ocurrido en el pueblo en muchos años. Toda Agua Santa, hasta los ancianos y los niños se juntaron en la calle. Las únicas ausentes fueron Antonia Sierra y Concha Díaz. Ni el Teniente ni Tomás Vargas inspiraban simpatía alguna, así es que daba lo mismo quien ganara; la diversión consistía en adivinar las angustias de los dos jugadores y de quienes habían apostado a uno u otro. A Tomás Vargas lo beneficiaba el hecho de que hasta entonces había sido afortunado con los naipes, pero el Teniente tenía la ventaja de su sangre fría y su prestigio de matón. A las siete de la tarde terminó la partida y, de acuerdo con las normas establecidas, Riad Halabí declaró ganador al Teniente.
+
+En el triunfo el policía mantuvo la misma calma que demostró la semana anterior en la derrota, ni una sonrisa burlona, ni una palabra desmedida, se quedó simplemente sentado en su silla escarbándose los dientes con la uña del dedo meñique.
+
+—Bueno, Vargas, ha llegado la hora de desenterrar tu tesoro —dijo, cuando se calló el vocerío de los mirones.
+
+La piel de Tomás Vargas se había vuelto cenicienta, tenía la camisa empapada de sudor y parecía que el aire no le entraba en el cuerpo, se le quedaba atorado en la boca. Dos veces intentó ponerse de pie y le fallaron las rodillas. Riad Halabí tuvo que sostenerlo. Por fin reunió la fuerza para echar a andar en dirección a la carretera, seguido por el Teniente, los policías, el árabe, la Maestra Inés y más atrás todo el pueblo en ruidosa procesión. Anduvieron un par de millas y luego Vargas torció a la derecha, metiéndose en el tumulto de la vegetación glotona que rodeaba a Agua Santa. No había sendero, pero él se abrió paso sin grandes vacilaciones entre los árboles gigantescos y los helechos, hasta llegar al borde de un barranco apenas visible, porque la selva era un biombo impenetrable. Allí se detuvo la multitud, mientras él bajaba con el Teniente. Hacía un calor húmedo y agobiante, a pesar de que faltaba poco para la puesta del sol. Tomás Vargas hizo señas de que lo dejaran solo, se puso a gatas y arrastrándose desapareció bajo unos filodendros de grandes hojas carnudas. Pasó un minuto largo antes que se escuchara su alarido. El Teniente se metió en el follaje, lo cogió por los tobillos y lo sacó a tirones.
+
+—¡Qué pasa!
+—¡No está, no está!
+—¡Cómo que no está!
+—¡Lo juro, mi Teniente, yo no sé nada, se lo robaron, me robaron el tesoro!
+
+Y se echó a llorar como una viuda, tan desesperado que ni cuenta se dio de las patadas que le propinó el Teniente.
+
+—¡Cabrón! ¡Me vas a pagar! ¡Por tu madre que me vas a pagar!
+
+Riad Halabí se lanzó barranco abajo y se lo quitó de las manos antes de que lo convirtiera en mazamorra. Logró convencer al Teniente que se calmara, porque a golpes no resolverían el asunto, y luego ayudó al viejo a subir. Tomás Vargas tenía el esqueleto descalabrado por el espanto de lo ocurrido, se ahogaba de sollozos y eran tantos sus titubeos y desmayos que el árabe tuvo que llevarlo casi en brazos todo el camino de vuelta, hasta depositarlo finalmente en su rancho. En la puerta estaban Antonia Sierra y Concha Díaz sentadas en dos sillas de paja, tomando café y mirando caer la noche. No dieron ninguna señal de consternación al enterarse de lo sucedido y continuaron sorbiendo su café, inmutables.
+
+Tomás Vargas estuvo con calentura más de una semana, delirando con morocotas de oro y naipes marcados, pero era de naturaleza firme y en vez de morirse de congoja, como todos suponían, recuperó la salud. Cuando pudo levantarse no se atrevió a salir durante varios días, pero finalmente su amor por la parranda pudo más que su prudencia, tomó su sombrero de pelo de guama y, todavía tembleque y asustado, partió a la taberna. Esa noche no regresó y dos días después alguien trajo la noticia de que estaba despachurrado en el mismo barranco donde había escondido su tesoro. Lo encontraron abierto en canal a machetazos, como una res, tal como todos sabían que acabaría sus días, tarde o temprano.
+
+Antonia Sierra y Concha Díaz lo enterraron sin grandes señas de desconsuelo y sin más cortejo que Riad Halabí y la Maestra Inés, que fueron por acompañarlas a ellas y no para rendirle homenaje póstumo a quien habían despreciado en vida. Las dos mujeres siguieron viviendo juntas, dispuestas a ayudarse mutuamente en la crianza de los hijos y en las vicisitudes de cada día. Poco después del sepelio compraron gallinas, conejos y cerdos, fueron en bus a la ciudad y volvieron con ropa para toda la familia. Ese año arreglaron el rancho con tablas nuevas, le agregaron dos cuartos, lo pintaron de azul y después instalaron una cocina a gas, donde iniciaron una industria de comida para vender a domicilio. Cada mediodía partían con todos los niños a distribuir sus viandas en el retén, la escuela, el correo, y si sobraban porciones las dejaban en el mostrador del almacén, para que Riad Halabí se las ofreciera a los camioneros. Y así salieron de la miseria y se iniciaron en el camino de la prosperidad.`,
+        attr: 'Isabel Allende · Cuentos de Eva Luna (1990)',
+      },
+          {
+        text: `DE BARRO ESTAMOS HECHOS
+
+Descubrieron la cabeza de la niña asomada en el lodazal, con los ojos abiertos, llamando sin voz. Tenía un nombre de Primera Comunión, Azucena. En aquel interminable cementerio, donde el olor de los muertos atraía a los buitres más remotos y donde los llantos de los huérfanos y los lamentos de los heridos llenaban el aire, esa muchacha obstinada en vivir se convirtió en el símbolo de la tragedia. Tanto transmitieron las cámaras la visión insoportable de su cabeza brotando del barro, como una negra calabaza, que nadie se quedó sin conocerla ni nombrarla. Y siempre que la vimos aparecer en la pantalla, atrás estaba Rolf Carlé, quien llegó al lugar atraído por la noticia, sin sospechar que allí encontraría un trozo de su pasado, perdido treinta años atrás.
+
+Primero fue un sollozo subterráneo que remeció los campos de algodón, encrespándolos como una espumosa ola. Los geólogos habían instalado sus máquinas de medir con semanas de anticipación y ya sabían que la montaña había despertado otra vez. Desde hacía mucho pronosticaban que el calor de la erupción podía desprender los hielos eternos de las laderas del volcán, pero nadie hizo caso de esas advertencias, porque sonaban a cuento de viejas. Los pueblos del valle continuaron su existencia sordos a los quejidos de la tierra, hasta la noche de ese miércoles de noviembre aciago, cuando un largo rugido anunció el fin del mundo y las paredes de nieve se desprendieron, rodando en un alud de barro, piedras y agua que cayó sobre las aldeas, sepultándolas bajo metros insondables del vómito telúrico. Apenas lograron sacudirse la parálisis del primer espanto, los sobrevivientes comprobaron que las casas, las plazas, las iglesias, las blancas plantaciones de algodón, los sombríos bosques del café y los potreros de los toros sementales habían desaparecido. Mucho después, cuando llegaron los voluntarios y los soldados a rescatar a los vivos y sacar la cuenta de la magnitud del cataclismo, calcularon que bajo el lodo había más de veinte mil seres humanos y un número impreciso de bestias, pudriéndose en un caldo viscoso. También habían sido derrotados los bosques y los ríos y no quedaba a la vista sino un inmenso desierto de barro.
+
+Cuando llamaron del Canal en la madrugada, Rolf Carlé y yo estábamos juntos. Salí de la cama aturdida de sueño y partí a preparar café mientras él se vestía de prisa. Colocó sus elementos de trabajo en la bolsa de lona verde que siempre llevaba, y nos despedimos como tantas otras veces. No tuve ningún presentimiento. Me quedé en la cocina sorbiendo mi café y planeando las horas sin él, segura de que al día siguiente estaría de regreso.
+
+Fue de los primeros en llegar, porque mientras otros periodistas se acercaban a los bordes del pantano en jeeps, en bicicletas, a pie, abriéndose camino cada uno como mejor pudo, él contaba con el helicóptero de la televisión y pudo volar por encima del alud. En las pantallas aparecieron las escenas captadas por la cámara de su asistente, donde él se veía sumergido hasta las rodillas, con un micrófono en la mano, en medio de un alboroto de niños perdidos, de mutilados, de cadáveres y de ruinas. El relato nos llegó con su voz tranquila. Durante años lo había visto en los noticiarios, escarbando en batallas y catástrofes, sin que nada le detuviera, con una perseverancia temeraria, y siempre me asombró su actitud de calma ante el peligro y el sufrimiento, como si nada lograra sacudir su fortaleza ni desviar su curiosidad. El miedo parecía no rozarlo, pero él me había confesado que no era hombre valiente, ni mucho menos. Creo que el lente de la máquina tenía un efecto extraño en él, como si lo transportara a otro tiempo, desde el cual podía ver los acontecimientos sin participar realmente en ellos. Al conocerlo más comprendí que esa distancia ficticia lo mantenía a salvo de sus propias emociones.
+
+Rolf Carlé estuvo desde el principio junto a Azucena. Filmó a los voluntarios que la descubrieron y a los primeros que intentaron aproximarse a ella, su cámara enfocaba con insistencia a la niña, su cara morena, sus grandes ojos desolados, la maraña compacta de su pelo. En ese lugar el fango era denso y había peligro de hundirse al pisar. Le lanzaron una cuerda, que ella no hizo empeño en agarrar, hasta que le gritaron que la cogiera, entonces sacó una mano y trató de moverse, pero en seguida se sumergió más. Rolf soltó su bolsa y el resto de su equipo y avanzó en el pantano, comentando para el micrófono de su ayudante que hacía frío y que ya comenzaba la pestilencia de los cadáveres.
+
+—¿Cómo te llamas? —le preguntó a la muchacha y ella le respondió con su nombre de flor—. No te muevas, Azucena —le ordenó Rolf Carlé y siguió hablándole sin pensar qué decía, sólo para distraerla, mientras se arrastraba lentamente con el barro hasta la cintura.
+
+El aire a su alrededor parecía tan turbio como el lodo. Por ese lado no era posible acercarse, así es que retrocedió y fue a dar un rodeo por donde el terreno parecía más firme. Cuando al fin estuvo cerca tomó la cuerda y se la amarró bajo los brazos, para que pudieran izarla. Le sonrió con esa sonrisa suya que le achica los ojos y lo devuelve a la infancia, le dijo que todo iba bien, ya estaba con ella, en seguida la sacarían. Les hizo señas a los otros para que halaran, pero apenas se tensó la cuerda la muchacha gritó. Lo intentaron de nuevo y aparecieron sus hombros y sus brazos, pero no pudieron moverla más, estaba atascada. Alguien sugirió que tal vez tenía las piernas comprimidas entre las ruinas de su casa, y ella dijo que no eran sólo escombros, también la sujetaban los cuerpos de sus hermanos, aferrados a ella.
+
+—No te preocupes, vamos a sacarte de aquí —le prometió Rolf.
+
+A pesar de las fallas de transmisión, noté que la voz se le quebraba y me sentí tanto más cerca de él por eso. Ella lo miró sin responder.
+
+En las primeras horas Rolf Carlé agotó todos los recursos de su ingenio para rescatarla. Luchó con palos y cuerdas, pero cada tirón era un suplicio intolerable para la prisionera. Se le ocurrió hacer una palanca con unos palos, pero eso no dio resultado y tuvo que abandonar también esa idea. Consiguió un par de soldados que trabajaron con él durante un rato, pero después lo dejaron solo, porque muchas otras víctimas reclamaban ayuda. La muchacha no podía moverse y apenas lograba respirar, pero no parecía desesperada, como si una resignación ancestral le permitiera leer su destino. El periodista, en cambio, estaba decidido a arrebatársela a la muerte. Le llevaron un neumático, que colocó bajo los brazos de ella como un salvavidas, y luego atravesó una tabla cerca del hoyo para apoyarse y así alcanzarla mejor. Como era imposible remover los escombros a ciegas, se sumergió un par de veces para explorar ese infierno, pero salió exasperado, cubierto de lodo, escupiendo piedras. Dedujo que se necesitaba una bomba para extraer el agua y envió a solicitarla por radio, pero volvieron con el mensaje de que no había transporte y no podían enviarla hasta la mañana siguiente.
+
+—¡No podemos esperar tanto! —reclamó Rolf Carlé, pero en aquel zafarrancho nadie se detuvo a compadecerlo.
+
+Habrían de pasar todavía muchas horas más antes de que él aceptara que el tiempo se había estancado y que la realidad había sufrido una distorsión irremediable. Un médico militar se acercó a examinar a los niños y afirmó que su corazón funcionaba bien y que si no se enfriaba demasiado podría resistir esa noche.
+
+—Ten paciencia, Azucena, mañana traerán la bomba —trató de consolarla Rolf Carlé.
+—No me dejes sola —le pidió ella.
+—No, claro que no.
+
+Les llevaron café y él se lo dio a la muchacha, sorbo a sorbo. El líquido caliente la animó y empezó a hablar de su pequeña vida, de su familia y de la escuela, de cómo era ese pedazo de mundo antes de que reventara el volcán. Tenía trece años y nunca había salido de los límites de su aldea. El periodista, sostenido por un optimismo prematuro, se convenció de que todo terminaría bien, llegaría la bomba, extraerían el agua, quitarían los escombros y Azucena sería trasladada en helicóptero a un hospital, donde se repondría con rapidez y donde él podría visitarla llevándole regalos. Pensó que ya no tenía edad para muñecas y no supo qué le gustaría, tal vez un vestido. No entiendo mucho de mujeres, concluyó divertido, calculando que había tenido muchas en su vida, pero ninguna le había enseñado esos detalles. Para engañar las horas comenzó a contarle sus viajes y sus aventuras de cazador de noticias, y cuando se le agotaron los recuerdos echó mano de la imaginación para inventar cualquier cosa que pudiera distraerla. En algunos momentos ella dormitaba, pero él seguía hablándole en la oscuridad, para demostrarle que no se había ido y para vencer el acoso de la incertidumbre. Ésa fue una larga noche.
+
+A muchas millas de allí, yo observaba en una pantalla a Rolf Carlé y a la muchacha. No resistí la espera en la casa y me fui a la Televisión Nacional, donde muchas veces pasé noches enteras con él editando programas. Así estuve cerca suyo y pude asomarme a lo que vivió en esos tres días definitivos. Acudí a cuanta gente importante existe en la ciudad, a los senadores de la República, a los generales de las Fuerzas Armadas, al embajador norteamericano y al presidente de la Compañía de Petróleos, rogándoles por una bomba para extraer el barro, pero sólo obtuve vagas promesas. Empecé a pedirla con urgencia por radio y televisión, a ver si alguien podía ayudarnos. Entre llamadas corría al centro de recepción para no perder las imágenes del satélite, que llegaban a cada rato con nuevos detalles de la catástrofe. Mientras los periodistas seleccionaban las escenas de más impacto para el noticiario, yo buscaba aquellas donde aparecía el pozo de Azucena. La pantalla reducía el desastre a un solo plano y acentuaba la tremenda distancia que me separaba de Rolf Carlé, sin embargo yo estaba con él, cada padecimiento de la niña me dolía como a él, sentía su misma frustración, su misma impotencia. Ante la imposibilidad de comunicarme con él, se me ocurrió el recurso fantástico de concentrarme para alcanzarlo con la fuerza del pensamiento y así darle ánimo. Por momentos me aturdía en una frenética e inútil actividad, a ratos me agobiaba la lástima y me echaba a llorar, y otras veces me vencía el cansancio y creía estar mirando por un telescopio la luz de una estrella muerta hace un millón de años.
+
+En el primer noticiario de la mañana vi aquel infierno, donde flotaban cadáveres de hombres y animales arrastrados por las aguas de nuevos ríos, formados en una sola noche por la nieve derretida. Del lodo sobresalían las copas de algunos árboles y el campanario de una iglesia, donde varias personas habían encontrado refugio y esperaban con paciencia a los equipos de rescate. Centenares de soldados y de voluntarios de la Defensa Civil intentaban remover escombros en busca de los sobrevivientes, mientras largas filas de espectros en harapos esperaban su turno para un tazón de caldo. Las cadenas de radio informaron que sus teléfonos estaban congestionados por las llamadas de familias que ofrecían albergue a los niños huérfanos. Escaseaban el agua para beber, la gasolina y los alimentos. Los médicos, resignados a amputar miembros sin anestesia, reclamaban al menos sueros, analgésicos y antibióticos, pero la mayor parte de los caminos estaban interrumpidos y además la burocracia retardaba todo. Entretanto, el barro contaminado por los cadáveres en descomposición amenazaba de peste a los vivos.
+
+Azucena temblaba apoyada en el neumático que la sostenía sobre la superficie. La inmovilidad y la tensión la habían debilitado mucho, pero se mantenía consciente y todavía hablaba con voz perceptible cuando le acercaban un micrófono. Su tono era humilde, como si estuviera pidiendo perdón por causar tantas molestias. Rolf Carlé tenía la barba crecida y sombras oscuras bajo los ojos, se veía agotado. Aun a esa enorme distancia pude percibir la calidad de ese cansancio, diferente a todas las fatigas anteriores de su vida. Había olvidado por completo la cámara, ya no podía mirar a la niña a través de un lente. Las imágenes que nos llegaban no eran de su asistente, sino de otros periodistas que se habían adueñado de Azucena, atribuyéndole la patética responsabilidad de encarnar el horror de lo ocurrido en ese lugar.
+
+Desde el amanecer Rolf se esforzó de nuevo por mover los obstáculos que retenían a la muchacha en esa tumba, pero disponía sólo de sus manos, no se atrevía a utilizar una herramienta, porque podía herirla. Le dio a Azucena la taza de papilla de maíz y plátano que distribuía el Ejército, pero ella la vomitó de inmediato. Acudió un médico y comprobó que estaba afiebrada, pero dijo que no se podía hacer mucho, los antibióticos estaban reservados para los casos de gangrena. También se acercó un sacerdote a bendecirla y colgarle al cuello una medalla de la Virgen. En la tarde empezó a caer una llovizna suave, persistente.
+
+—El cielo está llorando —murmuró Azucena y se puso a llorar también.
+—No te asustes —le suplicó Rolf—. Tienes que reservar tus fuerzas y mantenerte tranquila, todo saldrá bien, yo estoy contigo y te voy a sacar de aquí de alguna manera.
+
+Volvieron los periodistas para fotografiarla y preguntarle las mismas cosas que ella ya no intentaba responder. Entretanto llegaban más equipos de televisión y cine, rollos de cables, cintas, películas, vídeos, lentes de precisión, grabadoras, consolas de sonido, luces, pantallas de reflejo, baterías y motores, cajas con repuestos, electricistas, técnicos de sonido y camarógrafos, que enviaron el rostro de Azucena a millones de pantallas de todo el mundo. Y Rolf Carlé continuaba clamando por una bomba.
+
+El despliegue de recursos dio resultados y en la Televisión Nacional empezamos a recibir imágenes más claras y sonidos más nítidos, la distancia pareció acortarse de súbito y tuve la sensación atroz de que Azucena y Rolf se encontraban a mi lado, separados de mí por un vidrio irreductible. Pude seguir los acontecimientos hora a hora, supe cuánto hizo mi amigo por arrancar a la niña de su prisión y para ayudarla a soportar su calvario, escuché fragmentos de lo que hablaron y el resto pude adivinarlo, estuve presente cuando ella le enseñó a Rolf a rezar y cuando él la distrajo con los cuentos que yo le he contado en mil y una noches bajo el mosquitero blanco de nuestra cama.
+
+Al caer la oscuridad del segundo día él procuró hacerla dormir con las viejas canciones de Austria aprendidas de su madre, pero ella estaba más allá del sueño. Pasaron gran parte de la noche hablando, los dos extenuados, hambrientos, sacudidos por el frío. Y entonces, poco a poco, se derribaron las firmes compuertas que retuvieron el pasado de Rolf Carlé durante muchos años, y el torrente de cuanto había ocultado en las capas más profundas y secretas de la memoria salió por fin, arrastrando a su paso los obstáculos que por tanto tiempo habían bloqueado su conciencia.
+
+No todo pudo decírselo a Azucena, ella tal vez no sabía que había mundo más allá del mar ni tiempo anterior al suyo, era incapaz de imaginar Europa en la época de la guerra, así es que no le contó de la derrota, ni de la tarde en que los rusos lo llevaron al campo de concentración para enterrar a los prisioneros muertos de hambre. ¿Para qué explicarle que los cuerpos desnudos, apilados como una montaña de leños, parecían de loza quebradiza? ¿Cómo hablarle de los hornos y las horcas a esa niña moribunda? Tampoco mencionó la noche en que vio a su madre desnuda, calzada con zapatos rojos de tacones de estilete, llorando de humillación. Muchas cosas se calló, pero en esas horas revivió por primera vez todo aquello que su mente había intentado borrar. Azucena le hizo entrega de su miedo y así, sin quererlo, obligó a Rolf a encontrarse con el suyo.
+
+Allí, junto a ese pozo maldito, a Rolf le fue imposible seguir huyendo de sí mismo y el terror visceral que marcó su infancia lo asaltó por sorpresa. Retrocedió a la edad de Azucena y más atrás, y se encontró como ella atrapado en un pozo sin salida, enterrado en vida, la cabeza a ras de suelo, vio juntos a su cara las botas y las piernas de su padre, quien se había quitado la correa de la cintura y la agitaba en el aire con un silbido inolvidable de víbora furiosa. El dolor lo invadió, intacto y preciso, como siempre estuvo agazapado en su mente. Volvió al armario donde su padre lo ponía bajo llave para castigarlo por faltas imaginarias y allí estuvo horas eternas con los ojos cerrados para no ver la oscuridad, los oídos tapados con las manos para no oír los latidos de su propio corazón, temblando, encogido como un animal.
+
+En la neblina de los recuerdos encontró a su hermana Katharina, una dulce criatura retardada que pasó la existencia escondida con la esperanza de que el padre olvidara la desgracia de su nacimiento. Se arrastró junto a ella bajo la mesa del comedor y allí ocultos tras un largo mantel blanco, los dos niños permanecieron abrazados, atentos a los pasos y a las voces. El olor de Katharina le llegó mezclado con el de su propio sudor, con los aromas de la cocina, ajo, sopa, pan recién horneado y con un hedor extraño de barro podrido. La mano de su hermana en la suya, su jadeo asustado, el roce de su cabello salvaje en las mejillas, la expresión cándida de su mirada. Katharina, Katharina… surgió ante él flotando como una bandera, envuelta en el mantel blanco convertido en mortaja, y pudo por fin llorar su muerte y la culpa de haberla abandonado.
+
+Comprendió entonces que sus hazañas de periodista, aquellas que tantos reconocimientos y tanta fama le había dado, eran sólo un intento de mantener bajo control su miedo más antiguo, mediante la treta de refugiarse detrás de un lente a ver si así la realidad le resultaba más tolerable. Enfrentaba riesgos desmesurados como ejercicio de coraje, entrenándose de día para vencer los monstruos que lo atormentaban de noche. Pero había llegado el instante de la verdad y ya no pudo seguir escapando de su pasado. Él era Azucena, estaba enterrado en el barro, su terror no era la emoción remota de una infancia casi olvidada, era una garra en la garganta.
+
+En el sofoco del llanto se le apareció su madre, vestida de gris y con su cartera de piel de cocodrilo apretada contra el regazo, tal como la viera por última vez en el muelle, cuando fue a despedirlo al barco en el cual él se embarcó para América. No venía a secarle las lágrimas, sino a decirle que cogiera una pala, porque la guerra había terminado y ahora debían enterrar a los muertos.
+
+—No llores. Ya no me duele nada, estoy bien —le dijo Azucena al amanecer.
+—No lloro por ti, lloro por mí, que me duele todo —sonrió Rolf Carlé.
+
+En el valle del cataclismo comenzó el tercer día con una luz pálida entre nubarrones. El Presidente de la República se trasladó a la zona y apareció en traje de campaña para confirmar que era la peor desgracia de este siglo, el país estaba de duelo, las naciones hermanas habían ofrecido ayuda, se ordenaba estado de sitio, las Fuerzas Armadas serían inclementes, fusilarían sin trámites a quien fuera sorprendido robando o cometiendo otras fechorías. Agregó que era imposible sacar todos los cadáveres ni dar cuenta de los millares de desaparecidos, de modo que el valle completo se declaraba camposanto y los obispos vendrían a celebrar una misa solemne por las almas de las víctimas. Se dirigió a las carpas del Ejército, donde se amontonaban los rescatados, para entregarles el alivio de promesas inciertas, y al improvisado hospital, para dar una palabra de aliento a los médicos y enfermeras, agotados por tantas horas de penurias. Enseguida se hizo conducir al lugar donde estaba Azucena, quien para entonces ya era célebre, porque su imagen había dado la vuelta al planeta. La saludó con su lánguida mano de estadista y los micrófonos registraron su voz conmovida y su acento paternal, cuando le dijo que su valor era un ejemplo para la patria. Rolf Carlé lo interrumpió para pedirle una bomba y él le aseguró que se ocuparía del asunto en persona.
+
+Alcancé a ver a Rolf por unos instantes, en cuclillas junto al pozo. En el noticiario de la tarde se encontraba en la misma postura: y yo, asomada a la pantalla como una adivina ante su bola de cristal, percibí que algo fundamental había cambiado en él, adiviné que durante la noche se habían desmoronado sus defensas y se había entregado al dolor, por fin vulnerable. Esa niña tocó una parte de su alma a la cual él mismo no había tenido acceso y que jamás compartió conmigo. Rolf quiso consolarla y fue Azucena quien le dio consuelo a él.
+
+Me di cuenta del momento preciso en que Rolf dejó de luchar y se abandonó al tormento de vigilar la agonía de la muchacha. Yo estuve con ellos, tres días y dos noches, espiándolos al otro lado de la vida. Me encontraba allí cuando ella le dijo que en sus trece años nunca un muchacho la había querido y que era una lástima irse de este mundo sin conocer el amor, y él le aseguró que la amaba más de lo que jamás podría amar a nadie, más que a su madre y a su hermana, más que a todas las mujeres que habían dormido en sus brazos, más que a mí, su compañera, que daría cualquier cosa por estar atrapado en ese pozo en su lugar, que cambiaría su vida por la de ella, y vi cuando se inclinó sobre su pobre cabeza y la besó en la frente, agobiado por un sentimiento dulce y triste que no sabía nombrar.
+
+Sentí cómo en ese instante se salvaron ambos de la desesperanza, se desprendieron del lodo, se elevaron por encima de los buitres y de los helicópteros, volaron juntos sobre ese vasto pantano de podredumbre y lamentos. Y finalmente pudieron aceptar la muerte. Rolf Carlé rezó en silencio para que ella se muriera pronto, porque ya no era posible soportar tanto dolor.
+
+Para entonces yo había conseguido una bomba y estaba en contacto con un general dispuesto a enviarla en la madrugada del día siguiente en un avión militar. Pero al anochecer de ese tercer día, bajo las implacables lámparas de cuarzo y los lentes de cien máquinas, Azucena se rindió, sus ojos perdidos en los de ese amigo que la había sostenido hasta el final. Rolf Carlé le quitó el salvavidas, le cerró los párpados, la retuvo apretada contra su pecho por unos minutos y después la soltó. Ella se hundió lentamente, una flor en el barro.
+
+Estás de vuelta conmigo, pero ya no eres el mismo hombre. A menudo te acompaño al Canal y vemos de nuevo los videos de Azucena, los estudias con atención, buscando algo que pudiste haber hecho para salvarla y no se te ocurrió a tiempo. O tal vez los examinas para verte como en un espejo, desnudo. Tus cámaras están abandonadas en un armario, no escribes ni cantas, te queda durante horas sentado ante la ventana mirando las montañas. A tu lado, yo espero que completes el viaje hacia el interior de ti mismo y te cures de las viejas heridas. Sé que cuando regreses de tus pesadillas caminaremos otra vez de la mano, como antes.`,
+        attr: 'Isabel Allende · Cuentos de Eva Luna (1990)',
+      },
+    ],
+  },
+
+  letter: {
+    price: 9,
+    label: 'Cartas de Enamorados',
+    labelEn: 'Cartas de Enamorados',
+    prompts: [
+      'Ella recita. Escucha.',
+      'No se necesita nombre. El poema ya sabe a quién va.',
+    ],
+    pieces: [
+      {
+        text: `Aquí te amo.
+En los oscuros pinos se desenreda el viento.
+Fosforece la luna sobre las aguas errantes.
+Andan días iguales persiguiéndose.
+Se desciñe la niebla en danzantes figuras.
+Una gaviota de plata se descuelga del ocaso.
+A veces una vela. Altas, altas, estrellas.
+O la cruz negra de un barco.
+Solo.
+A veces amanezco, y hasta mi alma está húmeda.
+Suena, resuena el mar lejano.
+Este es un puerto.
+Aquí te amo.
+Aquí te amo y en vano te oculta el horizonte.
+Te estoy amando aun entra estas frías cosas.
+A veces van mis besos en esos barcos graves,
+que corren por el mar hacia donde no llegan.
+Ya me veo olvidado como estas viejas anclas.
+Son más tristes los muelles cuando atraca la tarde.
+Se fatiga mi vida inútilmente hambrienta.
+Amo lo que no tengo. Estás tú tan distante.
+Mi hastío forcejea con los lentos crepúsculos.
+Pero la noche llena y comienza a cantarme.
+La luna hace girar su rodaje de sueño.
+Me miran con tus ojos las estrellas más grandes.
+Y como yo te amo, los pinos en el viento,
+quieren cantar tu nombre con sus hojas de alambre.`,
+        attr: 'Pablo Neruda · Veinte poemas de amor y una canción desesperada (1924)',
+      },
+    ],
+  },
+
+  insult: {
+    price: 12,
+    label: 'Insultos por Enemigos Irreconciliables',
+    labelEn: 'Insultos',
+    prompts: [
+      'El nombre del enemigo, por favor.',
+      'Da el nombre. El insulto llegará con precisión.',
+      'Un nombre. Ella ha insultado a todos. El tuyo no es problema.',
+    ],
+    pieces: [
+      `Es imposible subestimarte.`,
+      `Tienes cara para la radio y voz para las revistas.`,
+      `Preferiría quemar cada puente que he cruzado antes que dejar que me sigas a través de uno.`,
+      `Eres tan inútil como una maleta sin asas.`,
+      `La sabiduría te persigue, pero eres más rápido.`,
+    ],
+  },
+
+  announcement: {
+    price: 5,
+    label: 'Las Nuevas',
+    labelEn: 'Las Nuevas',
+    prompts: [
+      'Estas son ciertas. Ella no inventa anuncios.',
+    ],
+    pieces: [
+      { text: `El 13 de noviembre de 1985 entró en erupción el Nevado del Ruiz en Colombia.`, attr: null },
+      { text: `El 11 de septiembre de 1973, Pinochet tomó el poder en Chile.`, attr: null },
+      { text: `En 1981 Isabel Allende publicó Cuentos de Eva Luna.`, attr: null },
+    ],
+  },
+
+  dream: {
+    price: 7,
+    label: 'La Calidad de un Sueño',
+    labelEn: 'La Calidad de un Sueño',
+    prompts: [
+      'Describe tu sueño. No necesitas recordarlo todo.',
+    ],
+    pieces: [
+      {
+        text: `Te encuentras en una encrucijada. Tu sueño lo demuestra.
+Necesitas reevaluar tu vida y recordar lo que es verdaderamente importante para ti.
+Piensa con firmeza: ¿A quién amas? ¿Qué valoras? Si fueras a desaparecer mañana, ¿qué harías ahora mismo?`,
+        attr: null,
+      },
+    ],
+  },
+};
+
+const SECRET_WORD_PAIRS = [
+  { words: "oscura luz",    meaning: "" },
+  { words: "mar adentro",   meaning: "" },
+  { words: "tierra viva",   meaning: "" },
+  { words: "cielo ciego",   meaning: "" },
+  { words: "fuego quieto",  meaning: "" },
+  { words: "noche clara",   meaning: "" },
+  { words: "alma errante",  meaning: "" },
+  { words: "sangre dulce",  meaning: "" },
+];
+
+// ── State ────────────────────────────────────────────────────────
+let totalCentavos = 0;
+let selectedCat   = null;
+let wordShown     = false;
+const indices     = {};
+Object.keys(CONTENT).forEach(k => indices[k] = 0);
+
+let secretPair = SECRET_WORD_PAIRS[Math.floor(Math.random() * SECRET_WORD_PAIRS.length)];
+
+// ── UI helpers ───────────────────────────────────────────────────
+function selectOffering(btn) {
+  document.querySelectorAll('.offering').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  selectedCat = btn.dataset.cat;
+
+  const cat = CONTENT[selectedCat];
+  const prompts = cat.prompts;
+  const prompt  = prompts[Math.floor(Math.random() * prompts.length)];
+  document.getElementById('request-prompt').textContent = prompt;
+  const lbl = document.getElementById('name-label');
+  if (lbl) lbl.textContent = selectedCat === 'insult' ? 'El nombre del enemigo:' : 'Para quién, si lo deseas:';
+
+  const section = document.getElementById('request-section');
+  section.classList.add('visible');
+
+  document.getElementById('delivery').classList.remove('visible');
+  document.getElementById('name-input').value = '';
+  document.getElementById('name-input').focus();
+}
+
+function askAgain() {
+  document.getElementById('delivery').classList.remove('visible');
+  document.querySelectorAll('.offering').forEach(b => b.classList.remove('active'));
+  selectedCat = null;
+  document.getElementById('request-section').classList.remove('visible');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  // Re-focus on offerings
+}
+
+
+function revealBlocks(el, text, attr) {
+  el.innerHTML = '';
+  const lines = text.split('\n');
+  let delay = 0;
+  const STEP = 160; // ms between lines
+
+  lines.forEach(function(line) {
+    if (line.trim() === '') {
+      var spacer = document.createElement('div');
+      spacer.className = 'text-spacer';
+      el.appendChild(spacer);
+    } else {
+      var div = document.createElement('div');
+      div.className = 'text-block';
+      div.textContent = line;
+      div.style.animationDelay = delay + 'ms';
+      el.appendChild(div);
+      delay += STEP;
+    }
+  });
+
+  if (attr) {
+    var attrEl = document.createElement('div');
+    attrEl.className = 'text-block delivery-attr';
+    attrEl.textContent = '\u2014 ' + attr;
+    attrEl.style.animationDelay = (delay + 320) + 'ms';
+    el.appendChild(attrEl);
+  }
+}
+
+
+
+function compose() {
+  if (!selectedCat) return;
+
+  const btn  = document.getElementById('compose-btn');
+  btn.disabled = true;
+  btn.textContent = 'She is composing…';
+
+  const cat    = CONTENT[selectedCat];
+  const idx    = indices[selectedCat] % cat.pieces.length;
+  const raw    = cat.pieces[idx];
+  const piece  = typeof raw === 'object' ? raw : { text: raw, attr: null };
+  const name   = document.getElementById('name-input').value.trim() || 'you';
+  const text   = piece.text.replace(/\{name\}/g, name);
+  indices[selectedCat]++;
+
+  // Show delivery section
+  const delivery = document.getElementById('delivery');
+  delivery.classList.add('visible');
+  document.getElementById('delivery-type').textContent =
+    cat.label + ' · ' + cat.labelEn;
+  document.getElementById('delivery-cost').textContent =
+    cat.price + ' centavos';
+
+  // Hide form, scroll to delivery
+  document.getElementById('request-section').classList.remove('visible');
+  setTimeout(function() {
+    delivery.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 80);
+
+  const textEl = document.getElementById('delivery-text');
+  revealBlocks(textEl, text, piece.attr);
+
+  // Update counter
+  totalCentavos += cat.price;
+  updateCounter(cat.price);
+
+  btn.disabled = false;
+  btn.textContent = 'Compose for me';
+
+  // Special word check
+  if (totalCentavos >= 50 && !wordShown) {
+    setTimeout(showSpecialWord, 1800);
+  }
+}
+
+function updateCounter(added) {
+  const el = document.getElementById('counter-amount');
+  el.textContent = totalCentavos;
+  el.classList.add('pulse');
+  setTimeout(() => el.classList.remove('pulse'), 400);
+  const suffix = document.getElementById('counter-suffix');
+  if (totalCentavos >= 50 && !wordShown) {
+    suffix.textContent = 'centavos — ella esta lista';
+    suffix.style.color = 'var(--gold)';
+  }
+}
+
+function showSpecialWord() {
+  wordShown = true;
+  const overlay = document.getElementById('word-overlay');
+  document.getElementById('secret-words').textContent = secretPair.words;
+  document.getElementById('secret-meaning').textContent = secretPair.meaning;
+  overlay.classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeOverlay() {
+  const overlay = document.getElementById('word-overlay');
+  overlay.style.transition = 'opacity 0.6s';
+  overlay.style.opacity = '0';
+  setTimeout(() => {
+    overlay.classList.remove('show');
+    overlay.style.opacity = '';
+    overlay.style.transition = '';
+    document.body.style.overflow = '';
+  }, 600);
+}
+
+// Allow Enter key in name field
+document.getElementById('name-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') compose();
+});
+</script>
+</body>
+</html>
